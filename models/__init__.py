@@ -1,0 +1,54 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class Generator():
+    def __init__(self):
+        pass
+
+class VectorGenerator(Generator):
+    """A generator for vectors"""
+    def __init__(self, hidden_size, vocab_size):
+        super(VectorGenerator, self).__init__()
+        self.hidden_size = hidden_size
+        self.vocab_size  = vocab_size
+        self.proj = nn.Linear(hidden_size, vocab_size, bias=False)
+
+    def predict(self, x):
+        """Predict a word in the vocab, this is as linear projection"""
+        return F.log_softmax(self.proj(x), dim=-1)
+
+    def vectorize(self, x):
+        """Turning the input into a vector - this is simply the identity"""
+        return x
+
+class MatrixGenerator(Generator):
+    """A generator for matrices"""
+    def __init__(self, shape, vocab_size):
+        super(MatrixGenerator, self).__init__()
+        self.shape = shape
+        self.vocab_size = vocab_size
+        self.proj = nn.Conv2d(1, vocab_size, shape, bias=False, padding=0)
+        
+    def predict(self, x):
+        x = torch.unsqueeze(x, 1)
+        proj = self.proj(x).squeeze(-1).squeeze(-1)
+        return F.log_softmax(proj, dim=-1)
+        
+    def vectorize(self, x):
+        new_shape = x.shape[-1] * x.shape[-2]
+        new_shape = tuple(x[:-2] + [new_shape])
+        return x.reshape(new_shape)
+    
+class Embedder(nn.Module):
+    def __init__(self, generator):
+        super(Embedder, self).__init__()
+        self.generator = generator
+        
+class VectorEmbedder(Embedder):
+    def __init__(self, hidden_size, vocab_size):
+        super(VectorEmbedder, self).__init__(VectorGenerator(hidden_size, vocab_size))
+        
+class MatrixEmbedder(Embedder):
+    def __init__(self, shape, vocab_size):
+        super(MatrixEmbedder, self).__init__(MatrixGenerator(shape, vocab_size))        
