@@ -1,4 +1,5 @@
 import re
+import tqdm
 
 class Tokenizer:
     def __init__(self, min_occur=10):
@@ -16,7 +17,7 @@ class Tokenizer:
     
 
     def fit(self, corpus):
-        for text in corpus:
+        for text in tqdm.tqdm(corpus, desc="Loading words"):
             text = text.strip().lower()
             words = re.findall(r"[\w']+|[.,!?;]", text)
             for word in words:
@@ -24,7 +25,7 @@ class Tokenizer:
                     self.word_count[word] = 0
                 self.word_count[word] += 1
 
-        for text in corpus:
+        for text in tqdm.tqdm(corpus, desc="Tokenizing words"):
             text = text.strip().lower()
             words = re.findall(r"[\w']+|[.,!?;]", text)
             for word in words:
@@ -38,7 +39,7 @@ class Tokenizer:
 
     def tokenize(self, corpus):
         tokenized_corpus = []
-        for text in corpus:
+        for text in tqdm.tqdm(corpus, desc="Tokenizing"):
             text = text.strip().lower()
             words = re.findall(r"[\w']+|[.,!?;]", text)
             tokenized_text = []
@@ -52,7 +53,7 @@ class Tokenizer:
 
     def de_tokenize(self, tokenized_corpus):
         corpus = []
-        for tokenized_text in tokenized_corpus:
+        for tokenized_text in tqdm.tqdm(tokenized_corpus, desc="De-tokenizing"):
             text = []
             for token in tokenized_text:
                 text.append(self.token_to_word[token])
