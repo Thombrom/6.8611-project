@@ -14,10 +14,8 @@ class Tokenizer:
             self.token_to_word[self.vocab_size] = token
             self.vocab_size += 1
 
-    
-
     def fit(self, corpus):
-        for text in tqdm.tqdm(corpus, desc="Loading words"):
+        for text in corpus:
             text = text.strip().lower()
             words = re.findall(r"[\w']+|[.,!?;]", text)
             for word in words:
@@ -25,7 +23,7 @@ class Tokenizer:
                     self.word_count[word] = 0
                 self.word_count[word] += 1
 
-        for text in tqdm.tqdm(corpus, desc="Tokenizing words"):
+        for text in corpus:
             text = text.strip().lower()
             words = re.findall(r"[\w']+|[.,!?;]", text)
             for word in words:
