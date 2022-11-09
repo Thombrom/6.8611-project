@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
 
 class Generator():
     def __init__(self):
@@ -31,24 +32,27 @@ class MatrixGenerator(Generator):
         self.proj = nn.Conv2d(1, vocab_size, shape, bias=False, padding=0)
         
     def predict(self, x):
-        x = torch.unsqueeze(x, 1)
-        proj = self.proj(x).squeeze(-1).squeeze(-1)
-        return F.log_softmax(proj, dim=-1)
+        top_shape = x.shape[:-2]
+        y = x.reshape(np.prod(x.shape[:-2]), *x.shape[-2:])        
+        z = torch.unsqueeze(y, 1)
+        proj = self.proj(z).squeeze(-1).squeeze(-1)
+        return F.log_softmax(proj, dim=-1).reshape(*top_shape, self.vocab_size)
         
     def vectorize(self, x):
         new_shape = x.shape[-1] * x.shape[-2]
-        new_shape = tuple(x[:-2] + [new_shape])
+        new_shape = x.shape[:-2] + (new_shape,)
         return x.reshape(new_shape)
     
 class Embedder(nn.Module):
-    def __init__(self, generator):
+    def __init__(self, generator, tokenizer):
         super(Embedder, self).__init__()
         self.generator = generator
+        self.tokenizer = tokenizer
         
 class VectorEmbedder(Embedder):
-    def __init__(self, hidden_size, vocab_size):
-        super(VectorEmbedder, self).__init__(VectorGenerator(hidden_size, vocab_size))
+    def __init__(self, tokenizer, hidden_size, vocab_size):
+        super(VectorEmbedder, self).__init__(VectorGenerator(hidden_size, vocab_size), tokenizer)
         
 class MatrixEmbedder(Embedder):
-    def __init__(self, shape, vocab_size):
-        super(MatrixEmbedder, self).__init__(MatrixGenerator(shape, vocab_size))        
+    def __init__(self, tokenizer, shape, vocab_size):
+        super(MatrixEmbedder, self).__init__(MatrixGenerator(shape, vocab_size), tokenizer)    

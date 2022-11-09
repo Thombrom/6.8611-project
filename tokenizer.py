@@ -1,5 +1,6 @@
 import re
 import tqdm
+import torch
 
 class Tokenizer:
     def __init__(self, min_occur=10):
@@ -34,10 +35,13 @@ class Tokenizer:
                 self.word_to_token[word] = self.vocab_size
                 self.token_to_word[self.vocab_size] = word
                 self.vocab_size += 1
-
+    
     def tokenize(self, corpus):
+        if not isinstance(corpus, (list,)):
+            corpus = [corpus]
+        
         tokenized_corpus = []
-        for text in tqdm.tqdm(corpus, desc="Tokenizing"):
+        for text in corpus:
             text = text.strip().lower()
             words = re.findall(r"[\w']+|[.,!?;]", text)
             tokenized_text = []
@@ -47,8 +51,11 @@ class Tokenizer:
                 else:
                     tokenized_text.append(self.word_to_token[word])
             tokenized_corpus.append(tokenized_text)
-        return tokenized_corpus
+        return torch.Tensor(tokenized_corpus).to(torch.int64)
 
+    def __call__(self, x):
+        return self.tokenize(x)
+    
     def de_tokenize(self, tokenized_corpus):
         corpus = []
         for tokenized_text in tqdm.tqdm(tokenized_corpus, desc="De-tokenizing"):
