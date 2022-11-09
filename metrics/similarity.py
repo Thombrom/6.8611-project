@@ -6,7 +6,7 @@ class SimilarityPair():
     def __init__(self, first, second, score):
         self.first = first
         self.second = second
-        self.score = score
+        self.score = float(score)
 
     def __repr__(self):
         return f"<SimilarityPair .first={self.first}, .second={self.second}, .score={self.score} >"
@@ -35,7 +35,7 @@ def word_similarity(embedder, max_count=None, dataset_file="/content/project/dat
     raw_score_to_similarity = []
     score_to_count = {}
     
-    for index, pair in tqdm.tqdm(enumerate(dataset.pairs)):
+    for index, pair in tqdm.tqdm(enumerate(dataset.pairs), total=len(dataset.pairs)):
         a_tokens = embedder.tokenizer(pair.first)
         b_tokens = embedder.tokenizer(pair.second)
         
@@ -62,11 +62,12 @@ def word_similarity(embedder, max_count=None, dataset_file="/content/project/dat
     raw_score_to_similarity.sort(reverse=True, key=lambda x: x[1])
     out_of_place = 0
     
-    #print(raw_score_to_similarity)
-    
     for index, pair in tqdm.tqdm(enumerate(raw_score_to_similarity)):
-        out_of_place += sum([ 1 if value[0] < pair[0] else 0 for value in raw_score_to_similarity[:index]])
+        out_of_place += sum([ pair[0] - value[0] if value[0] < pair[0] else 0 for value in raw_score_to_similarity[:index]])
         #print(sum([ 1 if value[0] < pair[0] else 0 for value in raw_score_to_similarity[:index]]))
         
     # Normalize and invert
-    return 1 - out_of_place / ((len(raw_score_to_similarity)) * (len(raw_score_to_similarity) - 1) / 2)
+    n = len(raw_score_to_similarity)
+
+    normailization_factor = 1 / 3 * n**2 * max(raw_score_to_similarity, key=lambda x: x[1])[1]
+    return out_of_place / normailization_factor
