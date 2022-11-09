@@ -15,7 +15,7 @@ class SimilarityPair():
         return self.__repr__()
 
 class MenDataset():
-    def __init__(self, file="datasets/MEN/MEN_dataset_natural_form_full"):
+    def __init__(self, file="/content/project/datasets/MEN/MEN_dataset_natural_form_full"):
         similarity_pairs = []
         sim_regex = re.compile(r'(?P<first>\w+) (?P<second>\w+) (?P<score>\d+\.\d+)')
         with open(file) as f:
