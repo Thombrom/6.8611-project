@@ -29,7 +29,7 @@ class MenDataset():
 def cosine_similarity(a, b):
     return torch.dot(a, b) / (torch.norm(a) * torch.norm(b))
 
-def word_similarity(embedder, max_count=None, dataset_file="datasets/MEN/MEN_dataset_natural_form_full"):
+def word_similarity(embedder, max_count=None, dataset_file="/content/project/datasets/MEN/MEN_dataset_natural_form_full"):
     dataset = MenDataset(dataset_file)
     
     raw_score_to_similarity = []
