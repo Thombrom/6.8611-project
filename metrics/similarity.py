@@ -16,7 +16,6 @@ class SimilarityPair():
 
 class MenDataset():
     def __init__(self, file="datasets/MEN/MEN_dataset_natural_form_full"):
-        
         similarity_pairs = []
         sim_regex = re.compile(r'(?P<first>\w+) (?P<second>\w+) (?P<score>\d+\.\d+)')
         with open(file) as f:
@@ -30,8 +29,8 @@ class MenDataset():
 def cosine_similarity(a, b):
     return torch.dot(a, b) / (torch.norm(a) * torch.norm(b))
 
-def word_similarity(embedder, max_count=None, file="datasets/MEN/MEN_dataset_natural_form_full"):
-    dataset = MenDataset(file=file)
+def word_similarity(embedder, max_count=None, dataset_file="datasets/MEN/MEN_dataset_natural_form_full"):
+    dataset = MenDataset(dataset_file)
     
     raw_score_to_similarity = []
     score_to_count = {}
