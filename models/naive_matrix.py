@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from models import MatrixEmbedder
+from . import MatrixEmbedder
 
 class NaiveMatrixModel(MatrixEmbedder):
     def __init__(self, tokenizer, shape, vocab_size):

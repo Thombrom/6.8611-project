@@ -1,4 +1,4 @@
-from models import VectorEmbedder
+from . import VectorEmbedder
 from transformers import DistilBertTokenizer, DistilBertModel
 import torch
 
