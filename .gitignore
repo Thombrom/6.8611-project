@@ -130,3 +130,4 @@ dmypy.json
 
 *.ipynb
 datasets/Wikicorp/data
+datasets/Wikicorp/data_long
