@@ -38,23 +38,27 @@ def get_word_analogy_score(embedder, dataset_file="/datasets/Word_analogy_datase
     all_embeddings = embedder.embeddings
     
     matching_tokens = 0
+    total = 0
     for analogy_line in tqdm((dataset.analogies)):
         word_1, analogy_1, word_2, analogy_2 = analogy_line.get()
 
 
         if embedder.name == "bert":
-            expected_token = embedder.word_to_token[analogy_2]
-            a_tokens = embedder.word_to_token[word_1]
-            a_analogy_tokens = embedder.word_to_token[analogy_1]
-            b_tokens = embedder.word_to_token[word_2]
+            try:
+                expected_token = embedder.word_to_token.get(analogy_2)
+                a_tokens = embedder.word_to_token.get(word_1)
+                a_analogy_tokens = embedder.word_to_token[analogy_1]
+                b_tokens = embedder.word_to_token[word_2]
 
-            a = embedder.embeddings[a_tokens]
-            a_analogy = embedder.embeddings[a_analogy_tokens]
-            b = embedder.embeddings[b_tokens]
+                a = embedder.embeddings[a_tokens]
+                a_analogy = embedder.embeddings[a_analogy_tokens]
+                b = embedder.embeddings[b_tokens]
 
-            a = embedder.generator.vectorize(a)
-            a_analogy = embedder.generator.vectorize(a_analogy)
-            b = embedder.generator.vectorize(b)
+                a = embedder.generator.vectorize(a)
+                a_analogy = embedder.generator.vectorize(a_analogy)
+                b = embedder.generator.vectorize(b)
+            except:
+                continue
         else:
             expected_token = embedder.tokenizer(analogy_2)
 
@@ -77,8 +81,9 @@ def get_word_analogy_score(embedder, dataset_file="/datasets/Word_analogy_datase
         print(f"token {analogy_token} expected token {expected_token}")
         if analogy_token == expected_token:
             matching_tokens += 1
+        total +=1
 
-    return matching_tokens / embedder.vocab_size
+    return matching_tokens / total
 
 
 
