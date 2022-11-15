@@ -33,9 +33,11 @@ class AnalogyDataset():
 def get_word_analogy_score(embedder, dataset_file="/datasets/Word_analogy_dataset/questions-words.txt"):
     dataset = AnalogyDataset(dataset_file)
     # (vocab_size, embedd_size)
-    # vocab_size = embedder.vocab_size
-    # embedd_size = embedder.hidden_size
-    all_embeddings = embedder.embeddings
+    all_embeddings = []
+    for token in range(embedder.vocab_size):
+        vectorized_embedding = embedder.generator.vectorize(embedder(token).squeeze())
+        all_embeddings.append(vectorized_embedding)
+
     matching_tokens = 0
     for analogy_line in tqdm((dataset.analogies)):
         word_1, analogy_1, word_2, analogy_2 = analogy_line
