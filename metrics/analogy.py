@@ -17,6 +17,9 @@ class Analogy():
     def __str__(self):
         return self.__repr__()
 
+    def get(self):
+        return [self.word_1, self.analogy_1, self.word_2, self.analogy_2]
+
 class AnalogyDataset():
     def __init__(self, dataset):
         self.analogies = []
@@ -33,13 +36,10 @@ def get_word_analogy_score(embedder, dataset_file="/datasets/Word_analogy_datase
     dataset = AnalogyDataset(dataset_file)
     (vocab_size, embedd_size) = embedder.vocab_size, embedder.hidden_size
     all_embeddings = embedder.embeddings
-    # for token in range(embedder.vocab_size):
-    #     vectorized_embedding = embedder.generator.vectorize(embedder(token).squeeze())
-    #     all_embeddings.append(vectorized_embedding)
-
+    
     matching_tokens = 0
     for analogy_line in tqdm((dataset.analogies)):
-        word_1, analogy_1, word_2, analogy_2 = analogy_line
+        word_1, analogy_1, word_2, analogy_2 = analogy_line.get()
 
         expected_token = embedder.tokenizer(analogy_2)
 
