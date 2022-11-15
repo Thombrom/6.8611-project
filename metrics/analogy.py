@@ -33,7 +33,7 @@ class AnalogyDataset():
 def get_word_analogy_score(embedder, dataset_file="/datasets/Word_analogy_dataset/questions-words.txt"):
     dataset = AnalogyDataset(dataset_file)
     (vocab_size, embedd_size) = embedder.vocab_size, embedder.hidden_size
-    all_embeddings = torch.rand((vocab_size, embedd_size))
+    all_embeddings = embedder.embeddings
     # for token in range(embedder.vocab_size):
     #     vectorized_embedding = embedder.generator.vectorize(embedder(token).squeeze())
     #     all_embeddings.append(vectorized_embedding)
