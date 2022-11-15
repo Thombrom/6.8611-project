@@ -8,7 +8,16 @@ class BertEmbedder(VectorEmbedder):
         tokenizer = lambda text: bert_tokenizer(text, return_tensors='pt')["input_ids"]
         super(BertEmbedder, self).__init__(tokenizer, 768, 30522)
         self.model = DistilBertModel.from_pretrained("distilbert-base-uncased")
-        self.embeddings = self.model.embeddings.word_embeddings.weight
+
+        self.vocab_size = 30522
+        self.hidden_size = 768
+        # tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        # bert = BertModel.from_pretrained('bert-base-uncased')
+
+        # token_embedding = {token: bert.get_input_embeddings()(torch.tensor(id))  for token, id in tokenizer.get_vocab().items()}
+
+        # print(len(token_embedding))
+        # print(token_embedding['[CLS]'])
         
     def forward(self, x):
         return self.model(input_ids=x, attention_mask=torch.ones(*x.shape)).last_hidden_state[:, 1:][:, :-1]
