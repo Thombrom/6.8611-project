@@ -13,7 +13,6 @@ class BertEmbedder(VectorEmbedder):
 
         self.embeddings = torch.empty((self.vocab_size, self.hidden_size))
         for word, token in bert_tokenizer.get_vocab().items():
-            print("token", token)
             self.embeddings[token] = self.model.get_input_embeddings()(torch.tensor(token))
 
         

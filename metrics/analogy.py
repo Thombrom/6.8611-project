@@ -20,16 +20,15 @@ class Analogy():
 class AnalogyDataset():
     def __init__(self, dataset):
         self.analogies = []
-        sim_regex = re.compile(r'(?P<word_1>\w+) (?P<analogy_1>\w+) (?P<word_2>\w+) (?P<analogy_2>\w+) ')
         with open(dataset) as f:
             print("Creating analogies ..")
             for line in tqdm(f):
-                match = sim_regex.search(line)
-                if match:
-                    self.analogies.append(Analogy(match.group("word_1"), match.group("analogy_1"), match.group("word_2")), match.group("analogy_2"))
+                words = line.split()
+                if len(words) == 4:
+                    word_1, analogy_1, word_2, analogy_2 = words
+                    self.analogies.append(Analogy(word_1, analogy_1, word_2, analogy_2))
 
-# def cosine_similarity(a, b):
-#     return torch.dot(a, b) / (torch.norm(a) * torch.norm(b))
+
 def get_word_analogy_score(embedder, dataset_file="/datasets/Word_analogy_dataset/questions-words.txt"):
     dataset = AnalogyDataset(dataset_file)
     (vocab_size, embedd_size) = embedder.vocab_size, embedder.hidden_size
@@ -59,24 +58,29 @@ def get_word_analogy_score(embedder, dataset_file="/datasets/Word_analogy_datase
         analogy_embedding = a_analogy - a + b
         analogy_token  = torch.argmax(pairwise_cosine_similarity(all_embeddings, analogy_embedding).squeeze())
 
+        print(f"token {analogy_token} expected token {expected_token}")
         if analogy_token == expected_token:
             matching_tokens += 1
 
     return matching_tokens / embedder.vocab_size
 
-# all_words = torch.rand((5, 10))
-
-# a = torch.rand(((1, 10)))
 
 
-# print("all_words", all_words)
-# print("a", a)
+if __name__ == '__main__':
+    pass
+    
+    # dataset = AnalogyDataset("/Users/hophinkibona/Desktop/6.8611-project/datasets/Word_analogy_dataset/questions-words.txt")
 
-# a_ = torch.rand(10)
-# b = torch.rand(10)
+    # print("hey", len(dataset.analogies))
+    # # all_words = torch.tensor([[1.0, 2.0], [2.0, 3.0], [1.0, 1.0]])
 
-# print(pairwise_cosine_similarity(all_words, a).flatten())
+    # # a = torch.tensor(([[2.0, 3.0]]))
 
-# if __name__ == '__main__':
-#     model = BertEmbedder()
-#     print(get_word_analogy_score(model))
+
+    # # print("all_words", all_words)
+    # # print("a", a)
+
+    # # # a_ = torch.rand(10)
+    # # # b = torch.rand(10)
+
+    # # print(pairwise_cosine_similarity(all_words, a).flatten())
