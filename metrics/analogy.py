@@ -41,19 +41,35 @@ def get_word_analogy_score(embedder, dataset_file="/datasets/Word_analogy_datase
     for analogy_line in tqdm((dataset.analogies)):
         word_1, analogy_1, word_2, analogy_2 = analogy_line.get()
 
-        expected_token = embedder.tokenizer(analogy_2)
 
-        a_tokens = embedder.tokenizer(word_1)
-        a_analogy_tokens = embedder.tokenizer(analogy_1)
-        b_tokens = embedder.tokenizer(word_2)
+        if embedder.name == "bert":
+            expected_token = embedder.word_to_token[analogy_2]
+            a_tokens = embedder.word_to_token[word_1]
+            a_analogy_tokens = embedder.word_to_token[analogy_1]
+            b_tokens = embedder.word_to_token[word_2]
 
-        a = embedder(a_tokens).squeeze()
-        a_analogy = embedder(a_analogy_tokens).squeeze()
-        b = embedder(b_tokens).squeeze()
+            a = embedder.embeddings[a_tokens]
+            a_analogy = embedder.embeddings[a_analogy_tokens]
+            b = embedder.embeddings[b_tokens]
 
-        a = embedder.generator.vectorize(a)
-        a_analogy = embedder.generator.vectorize(a_analogy)
-        b = embedder.generator.vectorize(b)
+            a = embedder.generator.vectorize(a)
+            a_analogy = embedder.generator.vectorize(a_analogy)
+            b = embedder.generator.vectorize(b)
+        else:
+            expected_token = embedder.tokenizer(analogy_2)
+
+            a_tokens = embedder.tokenizer(word_1)
+            a_analogy_tokens = embedder.tokenizer(analogy_1)
+            b_tokens = embedder.tokenizer(word_2)
+
+            a = embedder(a_tokens).squeeze()
+            a_analogy = embedder(a_analogy_tokens).squeeze()
+            b = embedder(b_tokens).squeeze()
+
+            a = embedder.generator.vectorize(a)
+            a_analogy = embedder.generator.vectorize(a_analogy)
+            b = embedder.generator.vectorize(b)
+
 
         analogy_embedding = a_analogy - a + b
         analogy_token  = torch.argmax(pairwise_cosine_similarity(all_embeddings, analogy_embedding).squeeze())
