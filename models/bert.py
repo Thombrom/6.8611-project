@@ -7,7 +7,7 @@ class BertEmbedder(VectorEmbedder):
         self.vocab_size = 30522
         self.hidden_size = 768
         bert_tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
-        tokenizer = lambda text: bert_tokenizer(text, return_tensors='pt')["input_ids"]
+        tokenizer = lambda text, pad: bert_tokenizer(text, return_tensors='pt')["input_ids"]
         super(BertEmbedder, self).__init__(tokenizer, self.hidden_size, self.vocab_size)
         self.model = DistilBertModel.from_pretrained("distilbert-base-uncased")
         self.name = "bert"

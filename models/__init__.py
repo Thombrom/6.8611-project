@@ -46,20 +46,18 @@ class MatrixGenerator(Generator):
         return x.reshape(new_shape)
 
 class Embedder(nn.Module):
-    def __init__(self, generator, tokenizer):
+    def __init__(self, generator, tokenizer, maxlen):
         super(Embedder, self).__init__()
         self.generator  = generator
         self.tokenizer  = tokenizer
         self.num_epochs = 0
+        self.maxlen     = maxlen
         self.optimizer  = None
 
     @property
     def device(self):
         return next(self.parameters()).device
 
-    def get_device(self):
-        return self.device
-        
     def set_num_epochs(self, num):
         self.num_epochs = num
         
@@ -67,10 +65,10 @@ class Embedder(nn.Module):
         self.optimizer = optimizer
         
 class VectorEmbedder(Embedder):
-    def __init__(self, tokenizer, hidden_size, vocab_size):
-        super(VectorEmbedder, self).__init__(VectorGenerator(hidden_size, vocab_size), tokenizer)
+    def __init__(self, tokenizer, hidden_size, vocab_size, maxlen=None):
+        super(VectorEmbedder, self).__init__(VectorGenerator(hidden_size, vocab_size), tokenizer, maxlen)
 
 
 class MatrixEmbedder(Embedder):
-    def __init__(self, tokenizer, shape, vocab_size):
-        super(MatrixEmbedder, self).__init__(MatrixGenerator(shape, vocab_size), tokenizer)    
+    def __init__(self, tokenizer, shape, vocab_size, maxlen=None):
+        super(MatrixEmbedder, self).__init__(MatrixGenerator(shape, vocab_size), tokenizer, maxlen)    

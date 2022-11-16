@@ -36,14 +36,15 @@ def word_similarity(embedder, max_count=None, dataset_file="/content/project/dat
     score_to_count = {}
     
     for index, pair in tqdm.tqdm(enumerate(dataset.pairs), total=len(dataset.pairs), position=0, leave=True):
-        a_tokens = embedder.tokenizer(pair.first)
-        b_tokens = embedder.tokenizer(pair.second)
+        a_tokens = embedder.tokenizer(pair.first, embedder.maxlen)
+        b_tokens = embedder.tokenizer(pair.second, embedder.maxlen)
         
-        a = embedder(a_tokens).squeeze()
-        b = embedder(b_tokens).squeeze()
+        a = embedder(a_tokens)
+        b = embedder(b_tokens)
 
-        a = embedder.generator.vectorize(a)
-        b = embedder.generator.vectorize(b)
+        # REMEMBER TO COPY THIS FOR ANALOGY
+        a = embedder.generator.vectorize(a).squeeze(0)[0]
+        b = embedder.generator.vectorize(b).squeeze(0)[0]
 
         if (a.dim() > 1 or b.dim() > 1):
             continue

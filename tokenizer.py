@@ -60,7 +60,7 @@ class Tokenizer:
                 self.token_to_word[self.vocab_size] = word
                 self.vocab_size += 1
     
-    def tokenize(self, corpus):
+    def tokenize(self, corpus, pad=None):
         if not isinstance(corpus, (list,)):
             corpus = [corpus]
         
@@ -74,11 +74,15 @@ class Tokenizer:
                     tokenized_text.append(Tokenizer.UNK_TOKEN)
                 else:
                     tokenized_text.append(self.word_to_token[word])
+
+            if pad:
+                tokenized_text = tokenized_text + [Tokenizer.PAD_TOKEN] * (pad - len(tokenized_text))
+            
             tokenized_corpus.append(tokenized_text)
         return torch.Tensor(tokenized_corpus).to(torch.int64)
 
-    def __call__(self, x):
-        return self.tokenize(x)
+    def __call__(self, *args, **kwargs):
+        return self.tokenize(*args, **kwargs)
     
     def de_tokenize(self, tokenized_corpus):
         if not isinstance(tokenized_corpus, (list,)):
