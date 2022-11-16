@@ -5,9 +5,9 @@ import numpy as np
 import os
 from torch.optim import Adam
 
-class Generator():
+class Generator(nn.Module):
     def __init__(self):
-        pass
+        super(Generator, self).__init__()
 
 class VectorGenerator(Generator):
     """A generator for vectors"""
