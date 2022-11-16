@@ -3,7 +3,7 @@ import torch.nn as nn
 import os
 import tqdm
 from torch.optim import Adam
-from models import MatrixEmbedder
+from . import MatrixEmbedder
 
 class NaiveMatrixModel(MatrixEmbedder):
     def __init__(self, tokenizer, shape, vocab_size):
