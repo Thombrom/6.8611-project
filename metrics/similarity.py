@@ -35,7 +35,7 @@ def word_similarity(embedder, max_count=None, dataset_file="/content/project/dat
     raw_score_to_similarity = []
     score_to_count = {}
     
-    for index, pair in tqdm.tqdm(enumerate(dataset.pairs), total=len(dataset.pairs)):
+    for index, pair in tqdm.tqdm(enumerate(dataset.pairs), total=len(dataset.pairs), position=0, leave=True):
         a_tokens = embedder.tokenizer(pair.first)
         b_tokens = embedder.tokenizer(pair.second)
         

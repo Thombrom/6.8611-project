@@ -44,7 +44,7 @@ class WikicorpDataset(Dataset):
         self.max_len = max_len
         self.pad = pad
         
-        for article in tqdm.tqdm(Wikicorp(file=file)):
+        for article in tqdm.tqdm(Wikicorp(file=file), position=0, leave=True):
             sentences = [ sentence for sentence in re.split(r"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s", " ".join(article.text)) ]
             if max_len:
                 self.sentences.extend([ sentence for sentence in sentences if len(tokenizer.tokenize(sentence)[0]) <= max_len ])
