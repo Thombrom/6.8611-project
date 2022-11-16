@@ -52,12 +52,10 @@ class Embedder(nn.Module):
         self.tokenizer  = tokenizer
         self.num_epochs = 0
         self.optimizer  = None
-        self.device     = torch.device('cpu')
 
-    def _apply(self, fn):
-        super()._apply(fn)
-        self.device = fn(self.device)
-        return self
+    @property
+    def device(self):
+        return next(self.parameters()).device
 
     def get_device(self):
         return self.device
