@@ -3,6 +3,12 @@ import tqdm
 import torch
 
 class Tokenizer:
+    UNK_TOKEN  = 0
+    MASK_TOKEN = 1
+    PAD_TOKEN  = 2
+    SOS_TOKEN  = 3
+    EOS_TOKEN  = 4
+
     def __init__(self, min_occur=10):
         self.word_to_token = {}
         self.token_to_word = {}
@@ -10,11 +16,29 @@ class Tokenizer:
         self.vocab_size = 0
         self.min_occur = min_occur
 
-        for token in ['<unk>', '<pad>', '<sos>', '<eos>']:
+        for token in ['<unk>', '<mask>', '<pad>', '<sos>', '<eos>']:
             self.word_to_token[token] = self.vocab_size
             self.token_to_word[self.vocab_size] = token
             self.vocab_size += 1
 
+    def save(self):
+        return {
+            'word_to_token': self.word_to_token,
+            'token_to_word': self.token_to_word,
+            'word_count': self.word_count,
+            'vocab_size': self.vocab_size,
+            'min_occur': self.min_occur
+        }
+    
+    @classmethod
+    def load(cls, state):
+        tokenizer = cls(state['min_occur'])
+        tokenizer.word_to_token = state['word_to_token']
+        tokenizer.token_to_word = state['token_to_word']
+        tokenizer.word_count = state['word_count']
+        tokenizer.vocab_size = state['vocab_size']
+        return tokenizer
+        
     def fit(self, corpus):
         for text in corpus:
             text = text.strip().lower()
@@ -47,7 +71,7 @@ class Tokenizer:
             tokenized_text = []
             for word in words:
                 if word not in self.word_to_token:
-                    tokenized_text.append(0)
+                    tokenized_text.append(Tokenizer.UNK_TOKEN)
                 else:
                     tokenized_text.append(self.word_to_token[word])
             tokenized_corpus.append(tokenized_text)
@@ -57,10 +81,15 @@ class Tokenizer:
         return self.tokenize(x)
     
     def de_tokenize(self, tokenized_corpus):
+        if not isinstance(tokenized_corpus, (list,)):
+            tokenized_corpus = [tokenized_corpus]
+        
         corpus = []
-        for tokenized_text in tqdm.tqdm(tokenized_corpus, desc="De-tokenizing"):
+        for tokenized_text in tokenized_corpus:
             text = []
             for token in tokenized_text:
+                if isinstance(token, torch.Tensor):
+                    token = token.item()
                 text.append(self.token_to_word[token])
             corpus.append(" ".join(text))
         return corpus
