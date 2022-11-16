@@ -60,19 +60,19 @@ def get_word_analogy_score(embedder, dataset_file="/datasets/Word_analogy_datase
             except:
                 continue
         else:
-            expected_token = embedder.tokenizer(analogy_2)
+            expected_token = embedder.tokenizer(analogy_2, embedder.maxlen)
 
-            a_tokens = embedder.tokenizer(word_1)
-            a_analogy_tokens = embedder.tokenizer(analogy_1)
-            b_tokens = embedder.tokenizer(word_2)
+            a_tokens = embedder.tokenizer(word_1, embedder.maxlen)
+            a_analogy_tokens = embedder.tokenizer(analogy_1, embedder.maxlen)
+            b_tokens = embedder.tokenizer(word_2, embedder.maxlen)
 
-            a = embedder(a_tokens).squeeze()
-            a_analogy = embedder(a_analogy_tokens).squeeze()
-            b = embedder(b_tokens).squeeze()
+            a = embedder(a_tokens)
+            a_analogy = embedder(a_analogy_tokens)
+            b = embedder(b_tokens)
 
-            a = embedder.generator.vectorize(a)
-            a_analogy = embedder.generator.vectorize(a_analogy)
-            b = embedder.generator.vectorize(b)
+            a = embedder.generator.vectorize(a).squeeze(0)[0]
+            a_analogy = embedder.generator.vectorize(a_analogy).squeeze(0)[0]
+            b = embedder.generator.vectorize(b).squeeze(0)[0]
 
 
         analogy_embedding = a_analogy - a + b
