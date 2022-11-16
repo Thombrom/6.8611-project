@@ -12,10 +12,10 @@ class DoubleMatrixModel(MatrixEmbedder):
         self.shape = shape
         self.maxlen = maxlen
         self.vocab_size = vocab_size
-        self.set_optimizer(Adam(self.parameters(), lr=1e-5))
         
         self.embeddings = nn.Parameter(torch.randn(vocab_size, *shape))
         self.conv_layer = nn.Conv2d(maxlen, maxlen, (3, 3), padding=1, padding_mode='zeros')
+        self.set_optimizer(Adam(self.parameters(), lr=1))
         
     def forward(self, x):
         x = self.embeddings[x]
@@ -44,7 +44,7 @@ class DoubleMatrixModel(MatrixEmbedder):
         model.load_state_dict(state['state_dict'])
         return model
     
-    def train(self, dataloader, epochs, savepath=None, epoch_func=lambda model: None):
+    def do_train(self, dataloader, epochs, savepath=None, epoch_func=lambda model: None):
         loss_func = nn.NLLLoss(reduction="sum", ignore_index=self.tokenizer.PAD_TOKEN)
         while self.num_epochs <= epochs:
             

@@ -11,6 +11,7 @@ class NaiveMatrixModel(MatrixEmbedder):
         self.shape = shape
         self.vocab_size = vocab_size
         self.embeddings = nn.Parameter(torch.randn(vocab_size, *shape))
+        
         self.set_optimizer(Adam(self.parameters(), lr=1e-5))
         
     def forward(self, x):
@@ -39,7 +40,7 @@ class NaiveMatrixModel(MatrixEmbedder):
         model.load_state_dict(state['state_dict'])
         return model
     
-    def train(self, dataloader, epochs, savepath, epoch_func=lambda model: None):
+    def do_train(self, dataloader, epochs, savepath, epoch_func=lambda model: None):
         loss_func = nn.NLLLoss(reduction="sum", ignore_index=self.tokenizer.PAD_TOKEN)
         while self.num_epochs <= epochs:
             

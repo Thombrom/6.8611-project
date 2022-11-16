@@ -15,6 +15,7 @@ class NaiveVectorModel(VectorEmbedder):
         self.hidden_size = hidden_size
         self.vocab_size  = vocab_size
         self.embeddings = nn.Embedding(vocab_size, hidden_size)
+        
         self.set_optimizer(Adam(self.parameters(), lr=1e-5))
 
     def forward(self, x):
@@ -43,7 +44,7 @@ class NaiveVectorModel(VectorEmbedder):
         model.load_state_dict(state['state_dict'])
         return model
     
-    def train(self, dataloader, epochs, savepath, epoch_func=lambda model: None):
+    def do_train(self, dataloader, epochs, savepath, epoch_func=lambda model: None):
         loss_func = nn.NLLLoss(reduction="sum", ignore_index=self.tokenizer.PAD_TOKEN)
         while self.num_epochs <= epochs:
             
