@@ -52,6 +52,15 @@ class Embedder(nn.Module):
         self.tokenizer  = tokenizer
         self.num_epochs = 0
         self.optimizer  = None
+        self.device     = torch.device('cpu')
+
+    def _apply(self, fn):
+        super()._apply(fn)
+        self.device = fn(self.device)
+        return self
+
+    def get_device(self):
+        return self.device
         
     def set_num_epochs(self, num):
         self.num_epochs = num

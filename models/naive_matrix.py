@@ -45,6 +45,10 @@ class NaiveMatrixModel(MatrixEmbedder):
             total_loss = 0
             
             for tokens, mask_idx, replaced_token in tqdm.tqdm(dataloader, position=0, leave=True):
+                tokens = tokens.to(self.get_device())
+                mask_idx =  mask_idx.to(self.get_device())
+                replaced_token = replaced_token.to(self.get_device())
+
                 output = self.forward(tokens)
                 predictions = self.generator.predict(output)
                 
