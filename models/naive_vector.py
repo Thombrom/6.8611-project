@@ -17,6 +17,7 @@ class NaiveVectorModel(VectorEmbedder):
         self.embeddings = nn.Embedding(vocab_size, hidden_size)
         
         self.set_optimizer(Adam(self.parameters(), lr=1e-5))
+        self.name = "NaiveVectorModel"
 
     def forward(self, x):
         return self.embeddings(x)

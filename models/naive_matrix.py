@@ -13,7 +13,7 @@ class NaiveMatrixModel(MatrixEmbedder):
         self.embeddings = nn.Parameter(torch.randn(vocab_size, *shape))
         
         self.set_optimizer(Adam(self.parameters(), lr=1e-5))
-        
+        self.name = "NaiveMatrixModel"
     def forward(self, x):
         return self.embeddings[x]
     

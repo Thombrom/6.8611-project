@@ -10,8 +10,8 @@ class BertEmbedder(VectorEmbedder):
         tokenizer = lambda text, pad: bert_tokenizer(text, return_tensors='pt')["input_ids"]
         super(BertEmbedder, self).__init__(tokenizer, self.hidden_size, self.vocab_size)
         self.model = DistilBertModel.from_pretrained("distilbert-base-uncased")
-        self.name = "bert"
         self.embeddings = torch.empty((self.vocab_size, self.hidden_size))
+        self.name = "BertEmbedder"
 
         self.word_to_token = {}
         self.token_to_word = {}
