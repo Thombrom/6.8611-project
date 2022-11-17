@@ -79,7 +79,6 @@ class NaiveVectorModel(VectorEmbedder):
                 self.optimizer.zero_grad()
                 total_loss += loss
                 
-            break
             print(f"Epoch {self.num_epochs}: Total loss {total_loss}")
             epoch_func(self)
             self.num_epochs += 1
