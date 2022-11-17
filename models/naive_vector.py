@@ -4,7 +4,7 @@ import tqdm
 import os
 
 from torch.optim import Adam
-from . import VectorEmbedder
+from models import VectorEmbedder
 
 # A very naive and simple model for generating
 # 1D vector embeddings. Just uses the pytorch 
@@ -51,10 +51,10 @@ class NaiveVectorModel(VectorEmbedder):
             
             total_loss = 0
             
-            for tokens, mask_idx, replaced_token in tqdm.tqdm(dataloader, position=0, leave=True):
+            for tokens in tqdm.tqdm(dataloader, position=0, leave=True):
                 tokens = tokens.to(self.device)
-                mask_idx =  mask_idx.to(self.device)
-                replaced_token = replaced_token.to(self.device)
+                #mask_idx =  mask_idx.to(self.device)
+                #replaced_token = replaced_token.to(self.device)
 
                 output = self.forward(tokens)
                 predictions = self.generator.predict(output)
@@ -63,14 +63,23 @@ class NaiveVectorModel(VectorEmbedder):
                 # We don't expect this model to really be able to
                 # learn anything because of the way it's directly 
                 # mapping the padding token embeding to the prediction
-                masked_predictions = predictions[torch.arange(len(mask_idx)).unsqueeze(-1), mask_idx.unsqueeze(-1)].squeeze()
+                #masked_predictions = predictions[torch.arange(len(mask_idx)).unsqueeze(-1), mask_idx.unsqueeze(-1)].squeeze()
+                #print(predictions.size())
+                #print(predictions.contiguous().view(-1, predictions.size(-1)).size())
+                #print(tokens.size())
+                #print(tokens.contiguous().view(-1).size())
+                #print(predictions.contiguous().view(-1, predictions.size(-1)))
                 
-                loss = loss_func(masked_predictions, replaced_token)
+                
+                loss = loss_func(
+                    predictions.contiguous().view(-1, predictions.size(-1)), 
+                    tokens.contiguous().view(-1))
                 loss.backward()          
                 self.optimizer.step()
                 self.optimizer.zero_grad()
                 total_loss += loss
                 
+            break
             print(f"Epoch {self.num_epochs}: Total loss {total_loss}")
             epoch_func(self)
             self.num_epochs += 1

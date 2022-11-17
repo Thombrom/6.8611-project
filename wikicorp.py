@@ -62,12 +62,12 @@ class WikicorpDataset(Dataset):
         if self.max_len:
             assert len(tokens) <= self.max_len 
         
-        mask_idx = random.randint(0, len(tokens) - 1)
-        replaced_token = tokens[mask_idx].item()
-        tokens[mask_idx] = self.tokenizer.MASK_TOKEN
+        #mask_idx = random.randint(0, len(tokens) - 1)
+        #replaced_token = tokens[mask_idx].item()
+        #tokens[mask_idx] = self.tokenizer.MASK_TOKEN
         
         if self.pad:
             tokens = tokens.tolist()
             tokens = torch.Tensor(tokens + [self.tokenizer.PAD_TOKEN] * (self.max_len - len(tokens))).to(torch.int64)
         
-        return tokens, mask_idx, replaced_token    
+        return tokens
