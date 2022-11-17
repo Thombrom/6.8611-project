@@ -32,7 +32,7 @@ class AnalogyDataset():
                     self.analogies.append(Analogy(word_1, analogy_1, word_2, analogy_2))
 
 
-def get_word_analogy_score(embedder, closest_k=5, dataset_file="/datasets/Word_analogy_dataset/questions-words.txt"):
+def get_word_analogy_score(embedder, closest_k=5, dataset_file="project/datasets/word_analogy_dataset/questions-words.txt"):
     dataset = AnalogyDataset(dataset_file)
 
     all_embeddings = embedder.get_all_embeddings()
