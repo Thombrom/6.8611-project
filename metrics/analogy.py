@@ -34,8 +34,8 @@ class AnalogyDataset():
 
 def get_word_analogy_score(embedder, closest_k=5, dataset_file="/datasets/Word_analogy_dataset/questions-words.txt"):
     dataset = AnalogyDataset(dataset_file)
-    (vocab_size, embedd_size) = embedder.vocab_size, embedder.hidden_size
-    all_embeddings = embedder.embeddings
+
+    all_embeddings = embedder.get_all_embeddings()
     
     matching_tokens = 0
     total = 0
@@ -66,7 +66,7 @@ def get_word_analogy_score(embedder, closest_k=5, dataset_file="/datasets/Word_a
                 #skip the word if it does not exist in the bert embedder
                 continue
         else:
-          expected_token = embedder.tokenizer(analogy_2).flatten()
+          expected_token = embedder.tokenizer(analogy_2).flatten().item()
 
           a_tokens = embedder.tokenizer(word_1)
           a_analogy_tokens = embedder.tokenizer(analogy_1)
@@ -80,9 +80,8 @@ def get_word_analogy_score(embedder, closest_k=5, dataset_file="/datasets/Word_a
           a_analogy = embedder.generator.vectorize(a_analogy)
           b = embedder.generator.vectorize(b)
 
-
         analogy_embedding = a_analogy - a + b
-        
+
         #get top k closest tokens
         top_analogy_tokens = torch.topk(pairwise_cosine_similarity(all_embeddings, analogy_embedding.unsqueeze(0)).squeeze(), closest_k)[1].tolist()
 
