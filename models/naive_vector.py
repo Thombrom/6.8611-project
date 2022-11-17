@@ -4,7 +4,7 @@ import tqdm
 import os
 
 from torch.optim import Adam
-from models import VectorEmbedder
+from . import VectorEmbedder
 
 # A very naive and simple model for generating
 # 1D vector embeddings. Just uses the pytorch 
