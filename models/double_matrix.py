@@ -51,21 +51,17 @@ class DoubleMatrixModel(MatrixEmbedder):
             
             total_loss = 0
             
-            for tokens, mask_idx, replaced_token in tqdm.tqdm(dataloader, position=0, leave=True):
+            for tokens in tqdm.tqdm(dataloader, position=0, leave=True):
                 tokens = tokens.to(self.device)
-                mask_idx =  mask_idx.to(self.device)
-                replaced_token = replaced_token.to(self.device)
+                #mask_idx =  mask_idx.to(self.device)
+                #replaced_token = replaced_token.to(self.device)
 
                 output = self.forward(tokens)
                 predictions = self.generator.predict(output)
                 
-                # For this model, this will be all padding tokens
-                # We don't expect this model to really be able to
-                # learn anything because of the way it's directly 
-                # mapping the padding token embeding to the prediction
-                masked_predictions = predictions[torch.arange(len(mask_idx)).unsqueeze(-1), mask_idx.unsqueeze(-1)].squeeze()
-                
-                loss = loss_func(masked_predictions, replaced_token)
+                loss = loss_func(
+                    predictions.contiguous().view(-1, predictions.size(-1)), 
+                    tokens.contiguous().view(-1))
                 loss.backward()          
                 self.optimizer.step()
                 self.optimizer.zero_grad()
