@@ -12,7 +12,7 @@ class NaiveMatrixModel(MatrixEmbedder):
         self.vocab_size = vocab_size
         self.embeddings = nn.Parameter(torch.randn(vocab_size, *shape))
 
-        self.set_optimizer(Adam(self.parameters(), lr=1e-5))
+        self.set_optimizer(Adam(self.parameters(), lr=1e-3))
         self.name = "NaiveMatrixModel"
     def forward(self, x):
         return self.embeddings[x]

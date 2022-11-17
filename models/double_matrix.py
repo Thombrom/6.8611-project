@@ -15,7 +15,7 @@ class DoubleMatrixModel(MatrixEmbedder):
         
         self.embeddings = nn.Parameter(torch.randn(vocab_size, *shape))
         self.conv_layer = nn.Conv2d(maxlen, maxlen, (3, 3), padding=1, padding_mode='zeros')
-        self.set_optimizer(Adam(self.parameters(), lr=1))
+        self.set_optimizer(Adam(self.parameters(), lr=1e-3))
         self.name = "DoubleMatrixModel"
         
     def forward(self, x):

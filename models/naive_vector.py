@@ -16,7 +16,7 @@ class NaiveVectorModel(VectorEmbedder):
         self.vocab_size  = vocab_size
         self.embeddings = nn.Embedding(vocab_size, hidden_size)
         
-        self.set_optimizer(Adam(self.parameters(), lr=1e-5))
+        self.set_optimizer(Adam(self.parameters(), lr=1e-3))
         self.name = "NaiveVectorModel"
 
     def forward(self, x):
@@ -58,18 +58,6 @@ class NaiveVectorModel(VectorEmbedder):
 
                 output = self.forward(tokens)
                 predictions = self.generator.predict(output)
-                
-                # For this model, this will be all padding tokens
-                # We don't expect this model to really be able to
-                # learn anything because of the way it's directly 
-                # mapping the padding token embeding to the prediction
-                #masked_predictions = predictions[torch.arange(len(mask_idx)).unsqueeze(-1), mask_idx.unsqueeze(-1)].squeeze()
-                #print(predictions.size())
-                #print(predictions.contiguous().view(-1, predictions.size(-1)).size())
-                #print(tokens.size())
-                #print(tokens.contiguous().view(-1).size())
-                #print(predictions.contiguous().view(-1, predictions.size(-1)))
-                
                 
                 loss = loss_func(
                     predictions.contiguous().view(-1, predictions.size(-1)), 
