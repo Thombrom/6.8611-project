@@ -22,6 +22,8 @@ class OutlierDataset():
 
         categories = []
 
+        total_embeddings = embedder.get_all_embeddings()
+
         with open(dataset, "r") as file:
             f = file.readline()
             category_list = (f.split('\n')[0],[])
@@ -40,7 +42,7 @@ class OutlierDataset():
                         # print(list(word))
                         if " " not in word:
                             try:
-                                temp = embedder.tokenize(word)
+                                embedder.tokenizer(word)
                                 category_list[1].append(word.split('\n')[0])
                             except:
                                 continue
