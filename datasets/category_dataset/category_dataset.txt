@@ -1,0 +1,30 @@
+beverages
+juice, beer, milk, coffee, tea, cocktail, wine, liqueur, sake, vodka, mead, sherry, brandy, gin, rum, latte, whisky,cider, gose, rompope, orange juice, masala chai, green tea, black tea, herbal tea, coconut milk, corn syrup, soymilk, rose water, hyeonmi cha
+sports
+bowling, football, aerobics, hockey, karate, korfball, handball, floorball, skiing, cycling, racing, softball, shooting, netball, snooker, powerlifting, jumping, wallball, volleyball, snowboarding, table tennis, floor hockey, olympic sports, wheelchair basketball, crab soccer, indoor soccer, table football, roller skating, vert skating, penny football
+emotions
+love, anxiety, empathy,  fear, envy, loneliness, shame, anger, annoyance, happiness, jealousy, apathy, resentment, frustration, belongingness, sympathy, pain, worry, hostility, sadness, broken heart, panic disorder, sexual desire, falling in love, emotional conflict, learned helplessness, chronic stress, anxiety sensitivity, mental breakdown, bike rage
+weather 
+cloud, wind, thunderstorm, fog, snow, wave, blizzard, sunlight, tide, virga, lightning, cyclone, whirlwind, sunset, dust, frost, flood, thunder, supercooling, fahrenheit, acid rain, rain and snow mixed, cumulus cloud, winter storm, blowing snow, geomagnetic storm, blood rain, fire whirl, pulse storm, dirty thunderstorm 
+landforms 
+lake, waterfall, stream, river, wetland, marsh, valley, pond, sandstone, mountain, cave, swamp, ridge, plateau, cliff, grassland, glacier, hill, bay, island, glacial lake, drainage basin, river delta, stream bed, vernal pool, salt marsh, proglacial lake, mud volcano, pit crater, lava lake
+trees 
+wood, oak, pine, evergreen, willow, vine, shrub, birch, beech, maple, pear, fir, pinales, lauraceae, sorbus, buxus, acacia, rhamnaceae, fagales, sycamore, alhambra creek, alstonia boonei, atlantic hazelwood, bee tree, blood banana, datun sahib, druid oak, new year tree, heart pine, fan palm
+algebra 
+addition, multiplication, exponentiation, tetration, polynomial, calculus, permutation, subgroup, integer, monomial, bijection, homomorphism, determinant, sequence, permanent, homotopy, subset, factorization, associativity, commutativity, real number, abstract algebra, convex set, prime number, complex analysis, natural number, complex number, lie algebra, identity matrix, set theory
+geometry 
+trigonometry, circle, square, polyhedron, surface, sphere, cube, icosahedron, hemipolyhedron, digon, midpoint, centroid, octadecagon, curvature, curve, zonohedron, cevian, orthant, cuboctahedron, midsphere, regular polygon, uniform star polyhedron, isogonal figure, icosahedral symmetry, hexagonal bipyramid, snub polyhedron, homothetic center, geometric shape, bragg plane, affine plane
+fish 
+goldfish, gourami, koi, cobitidae, tetra, goby, danio, wrasse, acanthuridae, anchovy, carp, catfish, cod, eel, flatfish, perch, pollock, salmon, triggerfish, herring, cave catfish, coachwhip ray, dwarf cichlid, moray eel, coastal fish, scissortail rasbora, flagtail pipefish, armoured catfish, hawaiian flagtail, pelagic fish
+dogs 
+spaniel, foxhound, bloodhound, beagle, pekingese, weimaraner, collie, terrier, poodle, puppy, otterhound, labradoodle, puggle, eurasier, drever, brindle, schnoodle, bandog, leonberger, cockapoo, golden retriever, tibetan terrier, bull terrier, welsh springer spaniel, hunting dog, bearded collie, picardy spaniel, afghan hound, brittany dog, redbone coonhound
+music 
+jazz, blues, song, choir, opera, rhythm, lyrics, melody, harmony, concert, comedy, violin, drum, piano, drama, cello, composer, musician, drummer, pianist, hip hop, classical music, electronic music, folk music, dance music, musical instrument, disc jockey, popular music, sheet music, vocal music
+politics 
+democracy, law, government, liberalism, justice, policy, rights, utilitarianism, election, capitalism, ideology, egalitarianism, debate, regime, globalism, authoritarianism, monarchism, anarchism, communism, individualism, freedom of speech, political science, public policy, civil society, international law, social contract, election law, social justice, global justice, group conflict
+philosophy 
+ethics, logic, ontology, aristotle, plato, rationalism, platonism, relativism, existence, truth, positivism, metalogic, subjectivism, idealism, materialism, aesthetics, probabilism, monism, truth, existence, western philosophy, contemporary philosophy, cognitive science, logical truth, ancient philosophy, universal mind, visual space, impossible world, theoretical philosophy, internal measurement
+linguistics 
+syntax, grammar, semantics, lexicon, speech, phonetics, vocabulary, phoneme, lexicography, language, pragmatics, orthography, terminology, pronoun, noun, verb, pronunciation, lexicology, metalinguistics, paleolinguistics, language death, historical linguistics, dependency grammar, noun phrase, comparative linguistics, word formation, cognitive semantics, syntactic structures, auxiliary verb, computational semantics
+vehicles 
+truck, car, aircraft, minibus, motorcycle, microvan, bicycle, tractor, microcar, van, ship, helicopter, airplane, towing, velomobile, rocket, train, bus, gyrocar, cruiser, container ship, school bus, road train, tow truck, audi a6, garbage truck, hydrogen tank, light truck, compressed air car, police car
