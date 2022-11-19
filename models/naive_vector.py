@@ -76,4 +76,7 @@ class NaiveVectorModel(VectorEmbedder):
             
             if savepath:
                 self.save(savepath, f"{type(self).__name__}_{self.num_epochs}.tar")
+
+    def get_all_embeddings(self):
+        return self.embeddings.weight
         

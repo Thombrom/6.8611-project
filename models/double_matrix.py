@@ -15,7 +15,7 @@ class DoubleMatrixModel(MatrixEmbedder):
         
         self.embeddings = nn.Parameter(torch.randn(vocab_size, *shape))
         self.conv_layer = nn.Conv2d(maxlen, maxlen, (3, 3), padding=1, padding_mode='zeros')
-        self.set_optimizer(Adam(self.parameters(), lr=1))
+        self.set_optimizer(Adam(self.parameters(), lr=1e-3))
         
     def forward(self, x):
         x = self.embeddings[x]
@@ -76,3 +76,6 @@ class DoubleMatrixModel(MatrixEmbedder):
             
             if savepath:
                 self.save(savepath, f"{type(self).__name__}_{self.num_epochs}.tar")
+
+    def get_all_embeddings(self):
+        return self.embeddings.view(self.vocab_size, -1)

@@ -11,9 +11,9 @@ class NaiveMatrixModel(MatrixEmbedder):
         self.shape = shape
         self.vocab_size = vocab_size
         self.embeddings = nn.Parameter(torch.randn(vocab_size, *shape))
-        
-        self.set_optimizer(Adam(self.parameters(), lr=1e-5))
-        
+
+        self.set_optimizer(Adam(self.parameters(), lr=1e-3))
+        self.name = "NaiveMatrixModel"
     def forward(self, x):
         return self.embeddings[x]
     
@@ -72,3 +72,6 @@ class NaiveMatrixModel(MatrixEmbedder):
             
             if savepath:
                 self.save(savepath, f"{type(self).__name__}_{self.num_epochs}.tar")
+
+    def get_all_embeddings(self):
+        return self.embeddings.view(self.vocab_size, -1)
