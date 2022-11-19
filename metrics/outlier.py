@@ -97,6 +97,7 @@ def detect_outliers(embedder, datafile):
         word3 = embedder.generator.vectorize(word3)
 
         similiarity_list = [(word1,[]), (word2,[]), (word3,[]), (outlier,[])]
+        random.shuffle(similiarity_list)
 
         for i in range(len(similiarity_list)):
             for j in range(len(similiarity_list)):
