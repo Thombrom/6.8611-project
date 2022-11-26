@@ -2,6 +2,8 @@ from . import VectorEmbedder
 from torch import nn
 from torch.optim import Adam
 
+import os
+import tqdm
 import torch
 
 class SelfAttentionVectorLayer(nn.Module):
