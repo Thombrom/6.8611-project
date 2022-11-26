@@ -42,30 +42,33 @@ class TransformerVectorLayer(nn.Module):
         self.layer_norm2         = nn.LayerNorm(hidden_size)
         
     def forward(self, x):
-        x = self.self_attention(x)
-        x = self.self_attention_aggr(x)
-        x = self.layer_norm1(x)
-        x = self.ffnn(x)
-        x = self.layer_norm2(x)
-        return x
+        y = self.self_attention(x)
+        y = self.self_attention_aggr(y)
+        y = self.layer_norm1(y + x)
+        z = self.ffnn(y)
+        z = self.layer_norm2(z + y)
+        return z
     
 # Essentially follows: https://jalammar.github.io/illustrated-transformer/
 class SelfAttentionVectorModel(VectorEmbedder):
-    def __init__(self, tokenizer, hidden_size, vocab_size):
+    def __init__(self, tokenizer, num_layers, hidden_size, vocab_size):
         super(SelfAttentionVectorModel, self).__init__(tokenizer, hidden_size, vocab_size)
         self.hidden_size = hidden_size
         self.vocab_size  = vocab_size
         self.embeddings = nn.Embedding(vocab_size, hidden_size)
+        self.num_layers = num_layers
         
         # Setup optimizer
         self.set_optimizer(Adam(self.parameters(), lr=1e-5))
         
         # Setup transformer layers
-        self.transformer_layer = TransformerVectorLayer(hidden_size, 64)
+        self.transformer_layer = [ TransformerVectorLayer(hidden_size, 64) for _ in range(num_layers) ]
         
     def forward(self, x):
         x =  self.embeddings(x)
-        return self.transformer_layer(x)
+        for idx in range(self.num_layers):
+            x = self.transformer_layer[idx](x)
+        return x
     
     def save(self, folder, name):
         path = os.sep.join([ folder, name ])
@@ -76,15 +79,15 @@ class SelfAttentionVectorModel(VectorEmbedder):
             'hidden_size':  self.hidden_size,
             'vocab_size':   self.vocab_size,
             'tokenizer':    self.tokenizer.save(),
+            'num_layers':   self.num_layers,
         }
         torch.save(state, path)
         
     @classmethod
-    def load(cls, tokenizer_cls, path, device='cpu'):
+    def load(cls, tokenizer_cls, path):
         state = torch.load(path)
         tokenizer = tokenizer_cls.load(state['tokenizer'])
-        model = cls(tokenizer, state['hidden_size'], state['vocab_size'])
-        model.to(device)
+        model = cls(tokenizer, state['num_layers'], state['hidden_size'], state['vocab_size'])
         model.optimizer.load_state_dict(state['optimizer'])
         model.num_epochs = state['epochs']
         model.load_state_dict(state['state_dict'])
