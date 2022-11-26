@@ -66,6 +66,9 @@ class Embedder(nn.Module):
     def set_optimizer(self, optimizer):
         self.optimizer = optimizer
         
+    def number_of_parameters(self):
+        return sum(p.numel() for p in self.parameters())
+
 class VectorEmbedder(Embedder):
     def __init__(self, tokenizer, hidden_size, vocab_size, maxlen=None):
         super(VectorEmbedder, self).__init__(VectorGenerator(hidden_size, vocab_size), tokenizer, maxlen)
