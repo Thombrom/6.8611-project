@@ -76,6 +76,3 @@ class DoubleMatrixModel(MatrixEmbedder):
             
             if savepath:
                 self.save(savepath, f"{type(self).__name__}_{self.num_epochs}.tar")
-
-    def get_all_embeddings(self):
-        return self.embeddings.view(self.vocab_size, -1)

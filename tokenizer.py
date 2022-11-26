@@ -97,3 +97,9 @@ class Tokenizer:
                 text.append(self.token_to_word[token])
             corpus.append(" ".join(text))
         return corpus
+
+    def __len__(self):
+        return len(self.word_to_token)
+
+    def get_vocab(self):
+        yield from self.word_to_token.items()
