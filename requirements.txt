@@ -3,3 +3,5 @@ torch
 numpy
 transformers
 ipywidgets
+scikit_learn
+torchmetrics
