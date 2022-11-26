@@ -80,10 +80,11 @@ class SelfAttentionVectorModel(VectorEmbedder):
         torch.save(state, path)
         
     @classmethod
-    def load(cls, tokenizer_cls, path):
+    def load(cls, tokenizer_cls, path, device='cpu'):
         state = torch.load(path)
         tokenizer = tokenizer_cls.load(state['tokenizer'])
         model = cls(tokenizer, state['hidden_size'], state['vocab_size'])
+        model.to(device)
         model.optimizer.load_state_dict(state['optimizer'])
         model.num_epochs = state['epochs']
         model.load_state_dict(state['state_dict'])
