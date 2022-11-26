@@ -31,10 +31,6 @@ class AnalogyDataset():
                     word_1, analogy_1, word_2, analogy_2 = words
                     self.analogies.append(Analogy(word_1, analogy_1, word_2, analogy_2))
 
-                # Reduce the size for now when testing
-                if (len(self.analogies) > 2000):
-                    return
-
 
 def get_word_analogy_score(embedder, closest_k=5, dataset_file="project/datasets/word_analogy_dataset/questions-words.txt"):
     dataset = AnalogyDataset(dataset_file)
