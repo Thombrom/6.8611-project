@@ -3,6 +3,7 @@ from tqdm import tqdm
 import torch
 import sklearn.metrics.pairwise
 from torchmetrics.functional import pairwise_cosine_similarity
+from .models.bert import  BertEmbedder
 
 class Analogy():
     def __init__(self, word_1, analogy_1, word_2, analogy_2):
