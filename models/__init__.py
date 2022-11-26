@@ -48,6 +48,8 @@ class MatrixGenerator(Generator):
 class Embedder(nn.Module):
     def __init__(self, generator, tokenizer, maxlen):
         super(Embedder, self).__init__()
+        self.name = "Embedder"  # To distinguish from the Bert embedder
+
         self.generator  = generator
         self.tokenizer  = tokenizer
         self.num_epochs = 0
