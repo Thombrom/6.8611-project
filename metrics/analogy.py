@@ -3,7 +3,6 @@ from tqdm import tqdm
 import torch
 import sklearn.metrics.pairwise
 from torchmetrics.functional import pairwise_cosine_similarity
-from .models.bert import  BertEmbedder
 
 class Analogy():
     def __init__(self, word_1, analogy_1, word_2, analogy_2):
@@ -42,7 +41,7 @@ def get_word_analogy_score(embedder, closest_k=5, dataset_file="project/datasets
 
     # Speed things up for BERT as otherwise this is very slow
     all_embeddings = None
-    if isinstance(embedder, BertEmbedder):
+    if embedder.name == 'Bert':
         all_embeddings = torch.empty((len(embedder.tokenizer), embedder.hidden_size))
         for word, token in embedder.tokenizer.get_vocab():
             all_embeddings[token] = embedder.model.get_input_embeddings()(torch.tensor(token))

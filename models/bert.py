@@ -25,6 +25,7 @@ class BertEmbedder(VectorEmbedder):
         tokenizer = BertTokenizer()
         super(BertEmbedder, self).__init__(tokenizer, self.hidden_size, self.vocab_size)
         self.model = DistilBertModel.from_pretrained("distilbert-base-uncased")
+        self.name = "Bert"
         
     def forward(self, x):
         return self.model(input_ids=x, attention_mask=torch.ones(*x.shape)).last_hidden_state[:, 1:][:, :-1]
