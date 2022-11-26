@@ -62,7 +62,7 @@ class SelfAttentionVectorModel(VectorEmbedder):
         self.set_optimizer(Adam(self.parameters(), lr=1e-5))
         
         # Setup transformer layers
-        self.transformer_layer = [ TransformerVectorLayer(hidden_size, 64) for _ in range(num_layers) ]
+        self.transformer_layer = nn.ModuleList([ TransformerVectorLayer(hidden_size, 64) for _ in range(num_layers) ])
         
     def forward(self, x):
         x =  self.embeddings(x)
