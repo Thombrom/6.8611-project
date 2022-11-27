@@ -92,34 +92,7 @@ class TransformerVectorModel(VectorEmbedder):
         model.num_epochs = state['epochs']
         model.load_state_dict(state['state_dict'])
         return model
-    
-    def do_train(self, dataloader, epochs, savepath, epoch_func=lambda model: None):
-        loss_func = nn.NLLLoss(reduction="sum", ignore_index=self.tokenizer.PAD_TOKEN)
-        while self.num_epochs <= epochs:
-            
-            total_loss = 0
-            
-            for tokens, mask_idx, replaced_token in tqdm.tqdm(dataloader, position=0, leave=True):
-                tokens = tokens.to(self.device)
-                mask_idx =  mask_idx.to(self.device)
-                replaced_token = replaced_token.to(self.device)
 
-                output = self.forward(tokens)
-                predictions = self.generator.predict(output)
-                masked_predictions = predictions[torch.arange(len(mask_idx)).unsqueeze(-1), mask_idx.unsqueeze(-1)].squeeze()
-                
-                loss = loss_func(masked_predictions, replaced_token)
-                loss.backward()          
-                self.optimizer.step()
-                self.optimizer.zero_grad()
-                total_loss += loss
-                
-            print(f"Epoch {self.num_epochs}: Total loss {total_loss}")
-            epoch_func(self)
-            self.num_epochs += 1
-            
-            if savepath:
-                self.save(savepath, f"{type(self).__name__}_{self.num_epochs}.tar")
 
 # Usage:
 # model = TransformerVectorModel(tokenizer, 2, 256, tokenizer.vocab_size)

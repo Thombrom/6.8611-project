@@ -29,6 +29,9 @@ class BertEmbedder(VectorEmbedder):
         
     def forward(self, x):
         return self.model(input_ids=x, attention_mask=torch.ones(*x.shape)).last_hidden_state[:, 1:][:, :-1]
+
+    def do_train(self, *args, **kwargs):
+        raise Exception("Bert cannot be trained")
     
 # Usage:
 # model = BertEmbedder()
