@@ -50,9 +50,9 @@ class TransformerVectorLayer(nn.Module):
         return z
     
 # Essentially follows: https://jalammar.github.io/illustrated-transformer/
-class SelfAttentionVectorModel(VectorEmbedder):
+class TransformerVectorModel(VectorEmbedder):
     def __init__(self, tokenizer, num_layers, hidden_size, vocab_size):
-        super(SelfAttentionVectorModel, self).__init__(tokenizer, hidden_size, vocab_size)
+        super(TransformerVectorModel, self).__init__(tokenizer, hidden_size, vocab_size)
         self.hidden_size = hidden_size
         self.vocab_size  = vocab_size
         self.embeddings = nn.Embedding(vocab_size, hidden_size)
@@ -120,3 +120,6 @@ class SelfAttentionVectorModel(VectorEmbedder):
             
             if savepath:
                 self.save(savepath, f"{type(self).__name__}_{self.num_epochs}.tar")
+
+# Usage:
+# model = TransformerVectorModel(tokenizer, 2, 256, tokenizer.vocab_size)

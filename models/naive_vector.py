@@ -76,3 +76,6 @@ class NaiveVectorModel(VectorEmbedder):
             
             if savepath:
                 self.save(savepath, f"{type(self).__name__}_{self.num_epochs}.tar")
+
+# Usage:
+# model = NaiveVectorModel(tokenizer, 256, tokenizer.vocab_size)
