@@ -78,6 +78,9 @@ class OutlierDataset():
 def detect_outliers(embedder, datafile):
 
     correct = 0
+    #test
+    #test
+    #test
     total = 0
 
     dataset = OutlierDataset(embedder, datafile)
