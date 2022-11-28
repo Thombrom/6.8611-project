@@ -40,12 +40,12 @@ class OutlierDataset():
                     for word in f_list:
                         word = word.strip()
                         if " " not in word:
-                            try:
+                            if embedder.tokenizer(word).item != 0:
                                 # temp = embedder.tokenizer(word)
                                 category_list[1].append(word.split('\n')[0])
                                 # print(category_list[1])
-                            except:
-                                continue
+                            # except:
+                            #     continue
 
                 f = file.readline()
 
