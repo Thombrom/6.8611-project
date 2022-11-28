@@ -74,7 +74,7 @@ class OutlierDataset():
         return self.outlier_groups
 
 
-# def detect_outliers(datafile): #add embedder
+def detect_outliers(datafile): #add embedder
     # print("apple:",embedder.tokenizer('apple').item)
     # correct = 0
     # test
@@ -130,12 +130,8 @@ class OutlierDataset():
 
     # return correct / total
 
-    # return 1
+    return datafile
 
-#dummy
-
-def detect_outliers(a):
-    return a
 # class Dummy():
 #     def __init__(self,a):
 #         self.a = a
