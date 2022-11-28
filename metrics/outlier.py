@@ -41,7 +41,7 @@ class OutlierDataset():
                         word = word.strip()
                         if " " not in word:
                             try:
-                                temp = embedder.tokenizer(word)
+                                # temp = embedder.tokenizer(word)
                                 category_list[1].append(word.split('\n')[0])
                                 # print(category_list[1])
                             except:
