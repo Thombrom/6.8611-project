@@ -130,7 +130,7 @@ def detect_outliers(datafile): #add embedder
 
     # return correct / total
 
-    return 1
+    return datafile
 
 # class Dummy():
 #     def __init__(self,a):
