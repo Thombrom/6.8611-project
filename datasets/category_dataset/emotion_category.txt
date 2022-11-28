@@ -1,0 +1,4 @@
+positive
+love, empathy, happiness, joy, gratitude, interest, hope, awe, inspired, enthusiastic, excitement, euphoria, belongingness, sympathy
+negative
+sadness, anxiety, fear, envy, loneliness, shame, anger, annoyance, jealousy, apathy, resentment, frustration, pain, worry, panic

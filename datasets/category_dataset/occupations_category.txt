@@ -1,0 +1,8 @@
+medical
+doctor, nurse, surgeon, anesthesiologists, paramedic, dentist, dermatologist, physician, neurologist, oncologist, pediatrician, psychiatrist, radiologist, pharmacist 
+crime
+criminal, robber, bandit, murderer, kidnapper, gang, burglar, their, shoplifter, forger
+justice
+police, judge, investigator, lawyer, detective, officer, warder, patroller, sheriff, marshal
+education
+teacher, professor, principal, student, counselor, administrator, educator, tutor, librarian, superintendent

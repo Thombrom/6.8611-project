@@ -1,0 +1,4 @@
+land
+sandstone, mountain, cave, ridge, plateau, cliff, grassland, hill, island, crater, canyon, dune, forest, gorge, valley, volcano
+water
+lake, waterfall, stream, river, wetland, marsh, pond, swamp, bay, ocean, gulf, bayou

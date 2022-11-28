@@ -1,5 +1,5 @@
 beverages
-juice, beer, milk, coffee, tea, cocktail, wine, liqueur, sake, vodka, mead, sherry, brandy, gin, rum, latte, whisky,cider, gose, rompope, orange juice, masala chai, green tea, black tea, herbal tea, coconut milk, corn syrup, soymilk, rose water, hyeonmi cha
+juice, soda, beer, milk, coffee, tea, cocktail, wine, liqueur, sake, vodka, mead, sherry, brandy, gin, rum, latte, whisky,cider, gose, rompope, orange juice, masala chai, green tea, black tea, herbal tea, coconut milk, corn syrup, soymilk, rose water, hyeonmi cha
 sports
 bowling, football, aerobics, hockey, karate, korfball, handball, floorball, skiing, cycling, racing, softball, shooting, netball, snooker, powerlifting, jumping, wallball, volleyball, snowboarding, table tennis, floor hockey, olympic sports, wheelchair basketball, crab soccer, indoor soccer, table football, roller skating, vert skating, penny football
 emotions
@@ -28,3 +28,9 @@ linguistics
 syntax, grammar, semantics, lexicon, speech, phonetics, vocabulary, phoneme, lexicography, language, pragmatics, orthography, terminology, pronoun, noun, verb, pronunciation, lexicology, metalinguistics, paleolinguistics, language death, historical linguistics, dependency grammar, noun phrase, comparative linguistics, word formation, cognitive semantics, syntactic structures, auxiliary verb, computational semantics
 vehicles 
 truck, car, aircraft, minibus, motorcycle, microvan, bicycle, tractor, microcar, van, ship, helicopter, airplane, towing, velomobile, rocket, train, bus, gyrocar, cruiser, container ship, school bus, road train, tow truck, audi a6, garbage truck, hydrogen tank, light truck, compressed air car, police car
+fruit
+apple, banana, watermelon, orange, pear, cherry, strawberry, grape, mango, blueberry, plum, raspberry, kiwi, papaya, pineapple, lemon, grapefruit, apricot, coconut, peach, melon
+vegetables
+artichoke, asparagus, eggplant, beet, broccoli, cabbage, carrot, cauliflower, celery, corn, garlic, kale, lettuce, mushrooms, onion, pea, pepper, potato, pumpkin, radish, spinach, squash, tomato, yam
+occupations
+waiter, paramedic, dentist, nurse, electrician, doctor, businessman, athlete, student, surgeon, soldier, professor, pilot, nun, magician, clown, housekeeper, gardener, farmer, journalist, diver, pope, priest, salesman, librarian, singer, actor, carpenter, photographer 

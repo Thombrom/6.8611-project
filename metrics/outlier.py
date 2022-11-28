@@ -12,17 +12,17 @@ class OutlierGroup():
         self.outlier = outlier
 
     def __repr__(self):
-        return f"<Group {self.word1}, {self.word2}, {self.word3}, {self.outlier}* >"
+        return f"<Group:[ {self.word1}, {self.word2}, {self.word3}, {self.outlier}* ]>"
 
     def __str__(self):
         return self.__repr__()
 
 class OutlierDataset():
-    def __init__(self, embedder, dataset=''):
+    def __init__(self, embedder, dataset='', numgroups=10000):
 
         categories = []
 
-        total_embeddings = embedder.get_all_embeddings()
+        # total_embeddings = embedder.get_all_embeddings()
 
         with open(dataset, "r") as file:
             f = file.readline()
@@ -39,11 +39,11 @@ class OutlierDataset():
                 else:
                     for word in f_list:
                         word = word.strip()
-                        # print(list(word))
                         if " " not in word:
                             try:
-                                embedder.tokenizer(word)
+                                temp = embedder.tokenizer(word)
                                 category_list[1].append(word.split('\n')[0])
+                                # print(category_list[1])
                             except:
                                 continue
 
@@ -54,12 +54,12 @@ class OutlierDataset():
         print(categories)
 
         num_categories = len(categories)
-        for i in range(100):
+        for i in range(numgroups):
             choices = random.sample(range(num_categories),2)
             similar_category = categories[choices[0]]
             outlier_category = categories[choices[1]]
 
-            print(similar_category[0], outlier_category[0])
+            # print(similar_category[0], outlier_category[0])
 
 
             similar_group = [similar_category[1][i] for i in random.sample(range(len(similar_category[1])),3)]
@@ -79,7 +79,7 @@ def detect_outliers(embedder, datafile):
     total = 0
 
     dataset = OutlierDataset(embedder, datafile)
-    all_embeddings = embedder.get_all_embeddings()
+    # all_embeddings = embedder.get_all_embeddings()
     outlier_groups = dataset.get_outlier_groups()
 
     for group in outlier_groups:
@@ -119,16 +119,16 @@ def detect_outliers(embedder, datafile):
 
     return correct/total
 
-# class Dummy():
-#     def __init__(self,a):
-#         self.a = a
-#
-#     def tokenize(self, p):
-#         return p
-#
-# d = OutlierDataset(embedder=Dummy(4), dataset='../datasets/category_dataset/category_dataset.txt')
-#
-# print(d.get_outlier_groups())
+class Dummy():
+    def __init__(self,a):
+        self.a = a
+
+    def tokenizer(self, p):
+        return p
+
+d = OutlierDataset(embedder=Dummy(4), dataset='../datasets/category_dataset/category_dataset.txt')
+
+print(d.get_outlier_groups())
 
 
 

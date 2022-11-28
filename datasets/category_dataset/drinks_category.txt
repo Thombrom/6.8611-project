@@ -1,0 +1,4 @@
+alcoholic
+beer, wine, cocktail, liquor, sake, vodka, brandy, gin, tequila, rum, whiskey
+nonalcoholic
+juice, water, milk, coffee, tea, latte, soda, lemonade
