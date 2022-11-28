@@ -1,10 +1,9 @@
-import re
-import os
 import copy
 import random
-import tqdm
+from tqdm import tqdm
 import torch
 from torchmetrics.functional import pairwise_cosine_similarity
+
 
 class OutlierGroup():
     def __init__(self, word1, word2, word3, outlier):
@@ -19,29 +18,30 @@ class OutlierGroup():
     def __str__(self):
         return self.__repr__()
 
+
 class OutlierDataset():
     def __init__(self, embedder, dataset='', numgroups=10000):
 
-        #what is going on
+        # what is going on
         categories = []
 
         with open(dataset, "r") as file:
             f = file.readline()
-            category_list = (f.split('\n')[0],[])
+            category_list = (f.split('\n')[0], [])
             f = file.readline()
             while f != "":
                 f_list = f.split(',')
 
-                if len(f_list)==1:
+                if len(f_list) == 1:
                     append_list = copy.deepcopy(category_list)
                     categories.append(append_list)
-                    category_list = (f_list[0].split('\n')[0],[])
+                    category_list = (f_list[0].split('\n')[0], [])
 
                 else:
                     for word in f_list:
                         word = word.strip()
                         if " " not in word:
-                            if 0 == 0: #try:
+                            if 0 == 0:  # try:
                                 # temp = embedder.tokenizer(word)
                                 category_list[1].append(word.split('\n')[0])
                                 # print(category_list[1])
@@ -56,14 +56,13 @@ class OutlierDataset():
 
         num_categories = len(categories)
         for i in range(numgroups):
-            choices = random.sample(range(num_categories),2)
+            choices = random.sample(range(num_categories), 2)
             similar_category = categories[choices[0]]
             outlier_category = categories[choices[1]]
 
             # print(similar_category[0], outlier_category[0])
 
-
-            similar_group = [similar_category[1][i] for i in random.sample(range(len(similar_category[1])),3)]
+            similar_group = [similar_category[1][i] for i in random.sample(range(len(similar_category[1])), 3)]
             outlier_group = similar_group + [random.choice(outlier_category[1])]
             random.shuffle(outlier_group)
 
@@ -76,11 +75,10 @@ class OutlierDataset():
 
 
 def detect_outliers(embedder, datafile):
-
     correct = 0
-    #test
-    #test
-    #test
+    # test
+    # test
+    # test
     total = 0
 
     dataset = OutlierDataset(embedder, datafile)
@@ -125,26 +123,26 @@ def detect_outliers(embedder, datafile):
         # word3 = embedder(word3_tokens).squeeze()
         # word3 = embedder.generator.vectorize(word3)
 
-        similiarity_list = [(a,[]), (b,[]), (c,[]), (expected_token,[])]
-        random.shuffle(similiarity_list)
+        similarity_list = [(a, []), (b, []), (c, []), (expected_token, [])]
+        random.shuffle(similarity_list)
 
-        for i in range(len(similiarity_list)):
-            for j in range(len(similiarity_list)):
-                if i!=j:
-                    a = similiarity_list[i][0]
-                    b = similiarity_list[j][0]
-                    similarity = pairwise_cosine_similarity(a,b)
-                    similiarity_list[i][1].append(similarity)
-                    similiarity_list[j][1].append(similarity)
+        for i in range(len(similarity_list)):
+            for j in range(len(similarity_list)):
+                if i != j:
+                    a = similarity_list[i][0]
+                    b = similarity_list[j][0]
+                    similarity = pairwise_cosine_similarity(a, b)
+                    similarity_list[i][1].append(similarity)
+                    similarity_list[j][1].append(similarity)
 
-        avg_similarity_list = [(i[0], sum(i[1])/3) for i in similiarity_list]
+        avg_similarity_list = [(i[0], sum(i[1]) / 3) for i in similarity_list]
         least_similar = sorted(avg_similarity_list, key=lambda x: x[1])[0]
 
         if least_similar == expected_token:
             correct += 1
-        total +=1
+        total += 1
 
-    return correct/total
+    return correct / total
 
 # class Dummy():
 #     def __init__(self,a):
@@ -156,18 +154,3 @@ def detect_outliers(embedder, datafile):
 # d = OutlierDataset(embedder=Dummy(4), dataset='../datasets/category_dataset/category_dataset.txt')
 #
 # print(d.get_outlier_groups())
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
