@@ -2,6 +2,8 @@ import re
 import os
 import copy
 import random
+import tqdm
+import torch
 from torchmetrics.functional import pairwise_cosine_similarity
 
 class OutlierGroup():
@@ -21,8 +23,6 @@ class OutlierDataset():
     def __init__(self, embedder, dataset='', numgroups=10000):
 
         categories = []
-
-        # total_embeddings = embedder.get_all_embeddings()
 
         with open(dataset, "r") as file:
             f = file.readline()
@@ -64,6 +64,7 @@ class OutlierDataset():
 
             similar_group = [similar_category[1][i] for i in random.sample(range(len(similar_category[1])),3)]
             outlier_group = similar_group + [random.choice(outlier_category[1])]
+            random.shuffle(outlier_group)
 
             # print(outlier_group)
 
@@ -79,26 +80,48 @@ def detect_outliers(embedder, datafile):
     total = 0
 
     dataset = OutlierDataset(embedder, datafile)
-    # all_embeddings = embedder.get_all_embeddings()
     outlier_groups = dataset.get_outlier_groups()
 
+    all_embeddings = None
+    if embedder.name == 'Bert':
+        all_embeddings = torch.empty((len(embedder.tokenizer), embedder.hidden_size))
+        for word, token in embedder.tokenizer.get_vocab():
+            all_embeddings[token] = embedder.model.get_input_embeddings()(torch.tensor(token))
+    else:
+        words = [''] * len(embedder.tokenizer)
+        for word, token in tqdm(embedder.tokenizer.get_vocab()):
+            words[token] = word
+        tokenized = embedder.tokenizer(words, embedder.maxlen)
+        pre_embeddings = embedder(tokenized)
+        all_embeddings = embedder.generator.vectorize(pre_embeddings)[:, 0]
+
+    word_to_index = {}
+    for word, idx in tqdm(embedder.tokenizer.get_vocab()):
+        word_to_index[word] = idx
+
     for group in outlier_groups:
-        expected_token = embedder.tokenizer(group.outlier)
-        outlier = embedder(expected_token).squeeze()
-        outlier = embedder.generator.vectorize(outlier)
 
-        word1_tokens = embedder.tokenizer(group.word1)
-        word2_tokens = embedder.tokenizer(group.word2)
-        word3_tokens = embedder.tokenizer(group.word3)
+        a = all_embeddings[word_to_index[group.word1]]
+        b = all_embeddings[word_to_index[group.word2]]
+        c = all_embeddings[word_to_index[group.word3]]
+        expected_token = all_embeddings[word_to_index[group.outlier]]
 
-        word1 = embedder(word1_tokens).squeeze()
-        word1 = embedder.generator.vectorize(word1)
-        word2 = embedder(word2_tokens).squeeze()
-        word2 = embedder.generator.vectorize(word2)
-        word3 = embedder(word3_tokens).squeeze()
-        word3 = embedder.generator.vectorize(word3)
+        # expected_token = embedder.tokenizer(group.outlier)
+        # outlier = embedder(expected_token).squeeze()
+        # outlier = embedder.generator.vectorize(outlier)
+        #
+        # word1_tokens = embedder.tokenizer(group.word1)
+        # word2_tokens = embedder.tokenizer(group.word2)
+        # word3_tokens = embedder.tokenizer(group.word3)
+        #
+        # word1 = embedder(word1_tokens).squeeze()
+        # word1 = embedder.generator.vectorize(word1)
+        # word2 = embedder(word2_tokens).squeeze()
+        # word2 = embedder.generator.vectorize(word2)
+        # word3 = embedder(word3_tokens).squeeze()
+        # word3 = embedder.generator.vectorize(word3)
 
-        similiarity_list = [(word1,[]), (word2,[]), (word3,[]), (outlier,[])]
+        similiarity_list = [(a,[]), (b,[]), (c,[]), (expected_token,[])]
         random.shuffle(similiarity_list)
 
         for i in range(len(similiarity_list)):
@@ -119,16 +142,16 @@ def detect_outliers(embedder, datafile):
 
     return correct/total
 
-class Dummy():
-    def __init__(self,a):
-        self.a = a
-
-    def tokenizer(self, p):
-        return p
-
-d = OutlierDataset(embedder=Dummy(4), dataset='../datasets/category_dataset/category_dataset.txt')
-
-print(d.get_outlier_groups())
+# class Dummy():
+#     def __init__(self,a):
+#         self.a = a
+#
+#     def tokenizer(self, p):
+#         return p
+#
+# d = OutlierDataset(embedder=Dummy(4), dataset='../datasets/category_dataset/category_dataset.txt')
+#
+# print(d.get_outlier_groups())
 
 
 
