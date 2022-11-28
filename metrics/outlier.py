@@ -81,68 +81,55 @@ def detect_outliers(embedder, datafile):
     # test
     total = 0
 
-    dataset = OutlierDataset(embedder, datafile)
-    outlier_groups = dataset.get_outlier_groups()
+    # dataset = OutlierDataset(embedder, datafile)
+    # outlier_groups = dataset.get_outlier_groups()
+    #
+    # all_embeddings = None
+    # if embedder.name == 'Bert':
+    #     all_embeddings = torch.empty((len(embedder.tokenizer), embedder.hidden_size))
+    #     for word, token in embedder.tokenizer.get_vocab():
+    #         all_embeddings[token] = embedder.model.get_input_embeddings()(torch.tensor(token))
+    # else:
+    #     words = [''] * len(embedder.tokenizer)
+    #     for word, token in tqdm(embedder.tokenizer.get_vocab()):
+    #         words[token] = word
+    #     tokenized = embedder.tokenizer(words, embedder.maxlen)
+    #     pre_embeddings = embedder(tokenized)
+    #     all_embeddings = embedder.generator.vectorize(pre_embeddings)[:, 0]
+    #
+    # word_to_index = {}
+    # for word, idx in tqdm(embedder.tokenizer.get_vocab()):
+    #     word_to_index[word] = idx
+    #
+    # for group in outlier_groups:
+    #
+    #     a = all_embeddings[word_to_index[group.word1]]
+    #     b = all_embeddings[word_to_index[group.word2]]
+    #     c = all_embeddings[word_to_index[group.word3]]
+    #     expected_token = all_embeddings[word_to_index[group.outlier]]
+    #
+    #     similarity_list = [(a, []), (b, []), (c, []), (expected_token, [])]
+    #     random.shuffle(similarity_list)
+    #
+    #     for i in range(len(similarity_list)):
+    #         for j in range(len(similarity_list)):
+    #             if i != j:
+    #                 w1 = similarity_list[i][0]
+    #                 w2 = similarity_list[j][0]
+    #                 similarity = pairwise_cosine_similarity(w1, w2)
+    #                 similarity_list[i][1].append(similarity)
+    #                 similarity_list[j][1].append(similarity)
+    #
+    #     avg_similarity_list = [(i[0], sum(i[1]) / 3) for i in similarity_list]
+    #     least_similar = sorted(avg_similarity_list, key=lambda x: x[1])[0]
+    #
+    #     if least_similar == expected_token:
+    #         correct += 1
+    #     total += 1
 
-    all_embeddings = None
-    if embedder.name == 'Bert':
-        all_embeddings = torch.empty((len(embedder.tokenizer), embedder.hidden_size))
-        for word, token in embedder.tokenizer.get_vocab():
-            all_embeddings[token] = embedder.model.get_input_embeddings()(torch.tensor(token))
-    else:
-        words = [''] * len(embedder.tokenizer)
-        for word, token in tqdm(embedder.tokenizer.get_vocab()):
-            words[token] = word
-        tokenized = embedder.tokenizer(words, embedder.maxlen)
-        pre_embeddings = embedder(tokenized)
-        all_embeddings = embedder.generator.vectorize(pre_embeddings)[:, 0]
+    # return correct / total
 
-    word_to_index = {}
-    for word, idx in tqdm(embedder.tokenizer.get_vocab()):
-        word_to_index[word] = idx
-
-    for group in outlier_groups:
-
-        a = all_embeddings[word_to_index[group.word1]]
-        b = all_embeddings[word_to_index[group.word2]]
-        c = all_embeddings[word_to_index[group.word3]]
-        expected_token = all_embeddings[word_to_index[group.outlier]]
-
-        # expected_token = embedder.tokenizer(group.outlier)
-        # outlier = embedder(expected_token).squeeze()
-        # outlier = embedder.generator.vectorize(outlier)
-        #
-        # word1_tokens = embedder.tokenizer(group.word1)
-        # word2_tokens = embedder.tokenizer(group.word2)
-        # word3_tokens = embedder.tokenizer(group.word3)
-        #
-        # word1 = embedder(word1_tokens).squeeze()
-        # word1 = embedder.generator.vectorize(word1)
-        # word2 = embedder(word2_tokens).squeeze()
-        # word2 = embedder.generator.vectorize(word2)
-        # word3 = embedder(word3_tokens).squeeze()
-        # word3 = embedder.generator.vectorize(word3)
-
-        similarity_list = [(a, []), (b, []), (c, []), (expected_token, [])]
-        random.shuffle(similarity_list)
-
-        for i in range(len(similarity_list)):
-            for j in range(len(similarity_list)):
-                if i != j:
-                    a = similarity_list[i][0]
-                    b = similarity_list[j][0]
-                    similarity = pairwise_cosine_similarity(a, b)
-                    similarity_list[i][1].append(similarity)
-                    similarity_list[j][1].append(similarity)
-
-        avg_similarity_list = [(i[0], sum(i[1]) / 3) for i in similarity_list]
-        least_similar = sorted(avg_similarity_list, key=lambda x: x[1])[0]
-
-        if least_similar == expected_token:
-            correct += 1
-        total += 1
-
-    return correct / total
+    return 1
 
 # class Dummy():
 #     def __init__(self,a):
