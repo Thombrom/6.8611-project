@@ -4,9 +4,6 @@ import re, random, tqdm, torch
 class Wikicorp:
     def __init__(self, file="datasets/Wikicorp/data"):
         self.file = open(file, "r")
-    
-    def __del__(self):
-        close(self.file)
 
     def __iter__(self):
         return self

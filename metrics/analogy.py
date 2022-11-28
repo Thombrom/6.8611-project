@@ -35,50 +35,46 @@ class AnalogyDataset():
 def get_word_analogy_score(embedder, closest_k=5, dataset_file="project/datasets/word_analogy_dataset/questions-words.txt"):
     dataset = AnalogyDataset(dataset_file)
 
-    all_embeddings = embedder.get_all_embeddings()
+    # Speed things up for BERT as otherwise this is very slow
+    all_embeddings = None
+    if embedder.name == 'Bert':
+        all_embeddings = torch.empty((len(embedder.tokenizer), embedder.hidden_size))
+        for word, token in embedder.tokenizer.get_vocab():
+            all_embeddings[token] = embedder.model.get_input_embeddings()(torch.tensor(token))
+    else:
+        words = [''] * len(embedder.tokenizer)
+        for word, token in tqdm(embedder.tokenizer.get_vocab()):
+            words[token] = word
+        tokenized = embedder.tokenizer(words, embedder.maxlen)
+        pre_embeddings = embedder(tokenized)
+        all_embeddings = embedder.generator.vectorize(pre_embeddings)[:, 0]
+        
+    
+    word_to_index = {}
+    for word, idx in tqdm(embedder.tokenizer.get_vocab()):
+        word_to_index[word] = idx
     
     matching_tokens = 0
     total = 0
     index = 0
-    for analogy_line in tqdm((dataset.analogies)):
+    for analogy_line in tqdm((dataset.analogies), position=0, leave=True):
         index += 1
         word_1, analogy_1, word_2, analogy_2 = analogy_line.get()
+        word_1 = word_1.lower()
+        analogy_1 = analogy_1.lower()
+        word_2 = word_2.lower()
+        analogy_2 = analogy_2.lower()
+        
+        if (set([word_1, analogy_1, word_2, analogy_2]) - set(word_to_index.keys())):
+            continue
 
         if index % 1000 == 0:
           print(f"accuracy {matching_tokens/(total+1)}")
-
-
-        if embedder.name == "BertEmbedder":
-            try: 
-                expected_token = embedder.word_to_token.get(analogy_2)
-                a_tokens = embedder.word_to_token.get(word_1)
-                a_analogy_tokens = embedder.word_to_token[analogy_1]
-                b_tokens = embedder.word_to_token[word_2]
-
-                a = embedder.embeddings[a_tokens]
-                a_analogy = embedder.embeddings[a_analogy_tokens]
-                b = embedder.embeddings[b_tokens]
-
-                a = embedder.generator.vectorize(a)
-                a_analogy = embedder.generator.vectorize(a_analogy)
-                b = embedder.generator.vectorize(b)
-            except:
-                #skip the word if it does not exist in the bert embedder
-                continue
-        else:
-          expected_token = embedder.tokenizer(analogy_2).flatten().item()
-
-          a_tokens = embedder.tokenizer(word_1)
-          a_analogy_tokens = embedder.tokenizer(analogy_1)
-          b_tokens = embedder.tokenizer(word_2)
-
-          a = embedder(a_tokens).squeeze()
-          a_analogy = embedder(a_analogy_tokens).squeeze()
-          b = embedder(b_tokens).squeeze()
-
-          a = embedder.generator.vectorize(a)
-          a_analogy = embedder.generator.vectorize(a_analogy)
-          b = embedder.generator.vectorize(b)
+        
+        a = all_embeddings[word_to_index[word_1]]
+        a_analogy = all_embeddings[word_to_index[analogy_1]]
+        b = all_embeddings[word_to_index[word_2]]
+        expected_token = word_to_index[analogy_2]
 
         analogy_embedding = a_analogy - a + b
 
@@ -88,5 +84,6 @@ def get_word_analogy_score(embedder, closest_k=5, dataset_file="project/datasets
         if expected_token in set(top_analogy_tokens):
             matching_tokens += 1
         total +=1
+
 
     return matching_tokens / total
