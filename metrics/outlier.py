@@ -21,54 +21,54 @@ class OutlierGroup():
 
 class OutlierDataset():
     def __init__(self, embedder, dataset='', numgroups=10000):
-
-        # what is going on
-        categories = []
-
-        with open(dataset, "r") as file:
-            f = file.readline()
-            category_list = (f.split('\n')[0], [])
-            f = file.readline()
-            while f != "":
-                f_list = f.split(',')
-
-                if len(f_list) == 1:
-                    append_list = copy.deepcopy(category_list)
-                    categories.append(append_list)
-                    category_list = (f_list[0].split('\n')[0], [])
-
-                else:
-                    for word in f_list:
-                        word = word.strip()
-                        if " " not in word:
-                            if 0 == 0:  # try:
-                                # temp = embedder.tokenizer(word)
-                                category_list[1].append(word.split('\n')[0])
-                                # print(category_list[1])
-                            # except:
-                            #     continue
-
-                f = file.readline()
-
         self.outlier_groups = []
-
-        print(categories)
-
-        num_categories = len(categories)
-        for i in range(numgroups):
-            choices = random.sample(range(num_categories), 2)
-            similar_category = categories[choices[0]]
-            outlier_category = categories[choices[1]]
-
-            # print(similar_category[0], outlier_category[0])
-
-            similar_group = [similar_category[1][i] for i in random.sample(range(len(similar_category[1])), 3)]
-            outlier_group = similar_group + [random.choice(outlier_category[1])]
-            random.shuffle(outlier_group)
-
-            # print(outlier_group)
-
-            self.outlier_groups.append(OutlierGroup(*outlier_group))
+        # what is going on
+        # categories = []
+        #
+        # with open(dataset, "r") as file:
+        #     f = file.readline()
+        #     category_list = (f.split('\n')[0], [])
+        #     f = file.readline()
+        #     while f != "":
+        #         f_list = f.split(',')
+        #
+        #         if len(f_list) == 1:
+        #             append_list = copy.deepcopy(category_list)
+        #             categories.append(append_list)
+        #             category_list = (f_list[0].split('\n')[0], [])
+        #
+        #         else:
+        #             for word in f_list:
+        #                 word = word.strip()
+        #                 if " " not in word:
+        #                     if 0 == 0:  # try:
+        #                         # temp = embedder.tokenizer(word)
+        #                         category_list[1].append(word.split('\n')[0])
+        #                         # print(category_list[1])
+        #                     # except:
+        #                     #     continue
+        #
+        #         f = file.readline()
+        #
+        # self.outlier_groups = []
+        #
+        # print(categories)
+        #
+        # num_categories = len(categories)
+        # for i in range(numgroups):
+        #     choices = random.sample(range(num_categories), 2)
+        #     similar_category = categories[choices[0]]
+        #     outlier_category = categories[choices[1]]
+        #
+        #     # print(similar_category[0], outlier_category[0])
+        #
+        #     similar_group = [similar_category[1][i] for i in random.sample(range(len(similar_category[1])), 3)]
+        #     outlier_group = similar_group + [random.choice(outlier_category[1])]
+        #     random.shuffle(outlier_group)
+        #
+        #     # print(outlier_group)
+        #
+        #     self.outlier_groups.append(OutlierGroup(*outlier_group))
 
     def get_outlier_groups(self):
         return self.outlier_groups
