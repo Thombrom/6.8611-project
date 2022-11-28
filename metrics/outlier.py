@@ -22,6 +22,7 @@ class OutlierGroup():
 class OutlierDataset():
     def __init__(self, embedder, dataset='', numgroups=10000):
 
+        #what is going on
         categories = []
 
         with open(dataset, "r") as file:
