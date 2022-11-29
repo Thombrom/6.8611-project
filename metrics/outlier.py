@@ -44,12 +44,13 @@ class OutlierDataset():
                                 # temp = embedder.tokenizer(word)
                                 category_list[1].append(word.split('\n')[0])
                                 # print(category_list[1])
-                           
+
 
                 f = file.readline()
 
         self.outlier_groups = []
 
+        categories = [cat for cat in categories if len(cat[1])>3]
         print(categories)
 
         num_categories = len(categories)
