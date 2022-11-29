@@ -123,6 +123,7 @@ def detect_outliers(embedder, datafile):
                     w2 = similarity_list[j][0].reshape((16,16))
                     # print("w1:",w1)
                     similarity = pairwise_cosine_similarity(w1, w2)
+                    print("similarity:", similarity)
                     similarity_list[i][1].append(similarity)
                     similarity_list[j][1].append(similarity)
 
