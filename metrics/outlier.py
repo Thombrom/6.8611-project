@@ -44,8 +44,7 @@ class OutlierDataset():
                                 # temp = embedder.tokenizer(word)
                                 category_list[1].append(word.split('\n')[0])
                                 # print(category_list[1])
-                            except:
-                                continue
+                           
 
                 f = file.readline()
 
