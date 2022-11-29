@@ -122,8 +122,8 @@ def detect_outliers(embedder, datafile):
         for i in range(len(similarity_list)):
             for j in range(len(similarity_list)):
                 if i != j:
-                    w1 = similarity_list[i][0].reshape((256,1))
-                    w2 = similarity_list[j][0].reshape((256,1))
+                    w1 = torch.flatten(similarity_list[i][0])
+                    w2 = torch.flatten(similarity_list[j][0])
                     # print("w1:",w1)
                     similarity = cosine_similarity(w1, w2)
                     print("similarity:", similarity)
