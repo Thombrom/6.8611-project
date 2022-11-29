@@ -75,8 +75,8 @@ class OutlierDataset():
 
 
 def detect_outliers(embedder, datafile, numgroups=10000):
-    def cosine_similarity(a, b):
-        return torch.dot(a, b) / (torch.norm(a) * torch.norm(b))
+    def distance(a, b):
+        return torch.norm(torch.subtract(a,b))
 
     print("apple:",embedder.tokenizer('apple').item)
     correct = 0
@@ -130,7 +130,7 @@ def detect_outliers(embedder, datafile, numgroups=10000):
                     w1 = torch.flatten(similarity_list[i][0])
                     w2 = torch.flatten(similarity_list[j][0])
                     # print("w1:",w1)
-                    similarity = abs(cosine_similarity(w1, w2).item())
+                    similarity = abs(distance(w1, w2).item())
                     # print("similarity:", similarity)
                     similarity_list[i][1].append(similarity)
                     similarity_list[j][1].append(similarity)
