@@ -120,8 +120,8 @@ def detect_outliers(embedder, datafile):
             for j in range(len(similarity_list)):
                 if i != j:
                     w1 = similarity_list[i][0].reshape((16,16))
-                    w2 = similarity_list[j][0]
-                    print("w1:",w1)
+                    w2 = similarity_list[j][0].reshape((16,16))
+                    # print("w1:",w1)
                     similarity = pairwise_cosine_similarity(w1, w2)
                     similarity_list[i][1].append(similarity)
                     similarity_list[j][1].append(similarity)
