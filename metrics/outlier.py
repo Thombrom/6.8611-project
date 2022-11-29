@@ -121,6 +121,7 @@ def detect_outliers(embedder, datafile):
                 if i != j:
                     w1 = similarity_list[i][0]
                     w2 = similarity_list[j][0]
+                    print("w1:",w1)
                     similarity = pairwise_cosine_similarity(w1, w2)
                     similarity_list[i][1].append(similarity)
                     similarity_list[j][1].append(similarity)
