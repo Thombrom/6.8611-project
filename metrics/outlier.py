@@ -40,8 +40,8 @@ class OutlierDataset():
                     for word in f_list:
                         word = word.strip()
                         if " " not in word:
-                            try:
-                                temp = embedder.tokenizer(word)
+                            if embedder.tokenizer(word).item()!=0:
+                                # temp = embedder.tokenizer(word)
                                 category_list[1].append(word.split('\n')[0])
                                 # print(category_list[1])
                             except:
@@ -77,9 +77,7 @@ class OutlierDataset():
 def detect_outliers(embedder, datafile):
     print("apple:",embedder.tokenizer('apple').item)
     correct = 0
-    # test
-    # test
-    # test
+    index = 0
     total = 0
 
     dataset = OutlierDataset(embedder, datafile)
@@ -103,6 +101,12 @@ def detect_outliers(embedder, datafile):
         word_to_index[word] = idx
 
     for group in outlier_groups:
+
+        index+=1
+
+        if index%500:
+            print(index,":", correct / total+1)
+
 
         a = all_embeddings[word_to_index[group.word1]]
         b = all_embeddings[word_to_index[group.word2]]
