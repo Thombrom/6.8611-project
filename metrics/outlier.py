@@ -105,7 +105,7 @@ def detect_outliers(embedder, datafile):
         index+=1
 
         if index%500:
-            print(index,":", correct / total+1)
+            print(index,":", correct/(total+1))
 
 
         a = all_embeddings[word_to_index[group.word1]]
