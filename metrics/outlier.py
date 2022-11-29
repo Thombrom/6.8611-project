@@ -112,9 +112,13 @@ def detect_outliers(embedder, datafile, numgroups=10000):
 
 
         a = all_embeddings[word_to_index[group.word1]]
+        print(group.word1, a)
         b = all_embeddings[word_to_index[group.word2]]
+        print(group.word2, b)
         c = all_embeddings[word_to_index[group.word3]]
+        print(group.word3, c)
         expected_token = all_embeddings[word_to_index[group.outlier]]
+        print(group.outlier, expected_token)
 
         similarity_list = [(a, []), (b, []), (c, []), (expected_token, [])]
         random.shuffle(similarity_list)
@@ -130,7 +134,7 @@ def detect_outliers(embedder, datafile, numgroups=10000):
                     # print("similarity:", similarity)
                     similarity_list[i][1].append(similarity)
                     similarity_list[j][1].append(similarity)
-                    
+
                     print(w1,w2,similarity)
 
         avg_similarity_list = [(i[0], sum(i[1]) / 3) for i in similarity_list]
