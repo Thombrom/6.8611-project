@@ -130,7 +130,7 @@ def detect_outliers(embedder, datafile, numgroups=10000):
                     w1 = torch.flatten(similarity_list[i][0])
                     w2 = torch.flatten(similarity_list[j][0])
                     # print("w1:",w1)
-                    similarity = cosine_similarity(w1, w2)
+                    similarity = cosine_similarity(w1, w2).item()
                     # print("similarity:", similarity)
                     similarity_list[i][1].append(similarity)
                     similarity_list[j][1].append(similarity)
@@ -138,6 +138,7 @@ def detect_outliers(embedder, datafile, numgroups=10000):
                     print(w1,w2,similarity)
 
         avg_similarity_list = [(i[0], sum(i[1]) / 3) for i in similarity_list]
+        print(avg_similarity_list)
         least_similar = sorted(avg_similarity_list, key=lambda x: x[1])[0]
 
         # print(least_similar, expected_token)
