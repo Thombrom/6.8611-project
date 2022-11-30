@@ -1,4 +1,4 @@
-from . import MatrixEmbedder
+from . import MatrixEmbedder, SelfAttentionMatrixLayer
 from torch import nn
 from torch.optim import Adam
 import numpy as np
@@ -6,30 +6,6 @@ import numpy as np
 import os
 import tqdm
 import torch
-
-class SelfAttentionMatrixLayer(nn.Module):
-    def __init__(self, hidden_shape, maxlen=None):
-        super(SelfAttentionMatrixLayer, self).__init__()
-        self.hidden_shape = hidden_shape
-        
-        # Set up key, query and value projections
-        self.key_proj   = nn.Conv2d(maxlen, maxlen, (3, 3), padding=1, padding_mode='zeros', groups=maxlen)
-        self.query_proj = nn.Conv2d(maxlen, maxlen, (3, 3), padding=1, padding_mode='zeros', groups=maxlen)
-        self.value_proj = nn.Conv2d(maxlen, maxlen, (3, 3), padding=1, padding_mode='zeros', groups=maxlen)
-        
-        self.key_pool   = nn.MaxPool2d(2, stride=2)
-        self.query_pool = nn.MaxPool2d(2, stride=2)
-        self.value_pool = nn.MaxPool2d(2, stride=2)
-        
-    def forward(self, x):
-        key   = self.key_pool(self.key_proj(x))
-        query = self.query_pool(self.query_proj(x))
-        value = self.value_pool(self.value_proj(x))
-        
-        attention = torch.einsum('bijk,bljk->bil', key, query)
-        attention /= (np.prod(self.hidden_shape) / 4)**(1/2)
-        attended_value = torch.einsum('bin,bnjk->bijk', attention, value)
-        return attended_value
 
 class TransformerMatrixLayer(nn.Module):
     def __init__(self, hidden_shape, maxlen=None):
