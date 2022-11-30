@@ -74,7 +74,7 @@ class OutlierDataset():
 
 
 
-def detect_outliers(embedder, datafile, numgroups=10000):
+def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0):
     def distance(a, b):
         return torch.norm(torch.subtract(a,b))
 
@@ -112,18 +112,22 @@ def detect_outliers(embedder, datafile, numgroups=10000):
 
 
         a = all_embeddings[word_to_index[group.word1]]
-        print(group.word1, a)
+        if print_bool:
+            print(group.word1, a)
         b = all_embeddings[word_to_index[group.word2]]
-        print(group.word2, b)
+        if print_bool:
+            print(group.word2, b)
         c = all_embeddings[word_to_index[group.word3]]
-        print(group.word3, c)
+        if print_bool:
+            print(group.word3, c)
         expected_token = all_embeddings[word_to_index[group.outlier]]
-        print(group.outlier, expected_token)
+        if print_bool:
+            print(group.outlier, expected_token)
 
         similarity_list = [(a, []), (b, []), (c, []), (expected_token, [])]
         random.shuffle(similarity_list)
-
-        print(group)
+        if print_bool:
+            print(group)
         for i in range(len(similarity_list)):
             for j in range(len(similarity_list)):
                 if i != j:
@@ -134,11 +138,12 @@ def detect_outliers(embedder, datafile, numgroups=10000):
                     # print("similarity:", similarity)
                     similarity_list[i][1].append(similarity)
                     similarity_list[j][1].append(similarity)
-
-                    print(w1,w2,similarity)
+                    if print_bool:
+                        print(w1,w2,similarity)
 
         avg_similarity_list = [(i[0], sum(i[1]) / 3) for i in similarity_list]
-        print(avg_similarity_list)
+        if print_bool:
+            print(avg_similarity_list)
         least_similar = sorted(avg_similarity_list, key=lambda x: x[1])[-1]
 
         # print(least_similar, expected_token)
@@ -146,6 +151,8 @@ def detect_outliers(embedder, datafile, numgroups=10000):
         if least_similar == expected_token:
             correct += 1
         total += 1
+
+    print(correct / total)
 
     return correct / total
 
