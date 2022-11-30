@@ -121,7 +121,7 @@ def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0):
 
         similarity_list = [(all_embeddings[word_to_index[i]],[]) for i in group.words]
 
-        a = all_embeddings[word_to_index[group.word1]]
+        # a = all_embeddings[word_to_index[group.word1]]
         # if print_bool:
         #     print(group.word1, a)
         # b = all_embeddings[word_to_index[group.word2]]
