@@ -6,14 +6,12 @@ from torchmetrics.functional import pairwise_cosine_similarity
 
 
 class OutlierGroup():
-    def __init__(self, word1, word2, word3, outlier):
-        self.word1 = word1
-        self.word2 = word2
-        self.word3 = word3
+    def __init__(self, words, outlier):
+        self.words = words
         self.outlier = outlier
 
     def __repr__(self):
-        return f"<Group:[ {self.word1}, {self.word2}, {self.word3}, {self.outlier}* ]>"
+        return f"<Group: {self.words + [self.outlier]}, outlier:{self.outlier} >"
 
     def __str__(self):
         return self.__repr__()
@@ -61,7 +59,7 @@ class OutlierDataset():
         self.outlier_groups = []
 
         print("prelim cats:", categories)
-        categories = [cat for cat in categories if len(cat[1])>3]
+        categories = [cat for cat in categories if len(cat[1])>=5]
         print(categories)
 
         num_categories = len(categories)
@@ -72,12 +70,10 @@ class OutlierDataset():
 
             # print(similar_category[0], outlier_category[0])
 
-            similar_group = [similar_category[1][i] for i in random.sample(range(len(similar_category[1])), 3)]
-            outlier_group = similar_group + [random.choice(outlier_category[1])]
+            similar_group = [similar_category[1][i] for i in random.sample(range(len(similar_category[1])), min(len(similar_category[1]),8))]
+            outlier = random.choice(outlier_category[1])
 
-            # print(outlier_group)
-
-            self.outlier_groups.append(OutlierGroup(*outlier_group))
+            self.outlier_groups.append(OutlierGroup(similar_group, outlier))
 
     def get_outlier_groups(self):
         return self.outlier_groups
@@ -89,6 +85,7 @@ def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0):
         return torch.norm(torch.subtract(a,b))
     def cosine_similiarity(a,b):
         return torch.dot(a,b)/(torch.norm(a)*torch.norm(b))
+
     if print_bool:
         print("apple:",embedder.tokenizer('apple').item)
     correct = 0
@@ -153,10 +150,10 @@ def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0):
                     if print_bool:
                         print(w1,w2,similarity)
 
-        avg_similarity_list = [(i[0], sum(i[1]) / 3) for i in similarity_list]
+        avg_similarity_list = [(i[0], sum(i[1]) / len(i[1])) for i in similarity_list]
         if print_bool:
             print(avg_similarity_list)
-        least_similar = sorted(avg_similarity_list, key=lambda x: x[1])[0][0]
+        least_similar = sorted(avg_similarity_list, key=lambda x: x[1])[-1][0]
         # least_similar = similarity_list[0][0]
 
         # print(least_similar, expected_token)
@@ -172,13 +169,19 @@ def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0):
 
     # return datafile
 
+
+
+
 # class Dummy():
 #     def __init__(self,a):
 #         self.a = a
+#         self.name = 'notbert'
 #
 #     def tokenizer(self, p):
-#         return p
+#         return torch.Tensor(1)
 #
-# d = OutlierDataset(embedder=Dummy(4), dataset='../datasets/category_dataset/category_dataset.txt')
+# d = OutlierDataset(embedder=Dummy(4), dataset='../datasets/category_dataset/category_dataset.txt',numgroups=20)
 #
-# print(d.get_outlier_groups())
+# a = d.get_outlier_groups()
+# for i in a:
+#     print(i)
