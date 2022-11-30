@@ -86,7 +86,7 @@ def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0, bert=0):
     index = 0
     total = 0
 
-    dataset = OutlierDataset(embedder, datafile, numgroups)
+    dataset = OutlierDataset(embedder, datafile, numgroups,bert=bert)
     outlier_groups = dataset.get_outlier_groups()
 
     all_embeddings = None
