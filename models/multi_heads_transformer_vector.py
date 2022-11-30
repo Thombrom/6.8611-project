@@ -6,31 +6,45 @@ import os
 import tqdm
 import torch
 
-class TransformerVectorLayer(nn.Module):
-    def __init__(self, hidden_size, kvq_size = 64):
-        super(TransformerVectorLayer, self).__init__()
+
+class MultiAttentionHeadsTransformerVectorLayer(nn.Module):
+    def __init__(self, hidden_size, kvq_size = 64, num_attention_heads=4):
+        super(MultiAttentionHeadsTransformerVectorLayer, self).__init__()
         self.hidden_size = hidden_size
         self.kvq_size = kvq_size
-        
+
         # Set up the parts of the transformer
-        self.self_attention      = SelfAttentionVectorLayer(hidden_size, kvq_size)
-        self.self_attention_aggr = nn.Linear(1 * kvq_size, hidden_size)
+        self.num_attention_heads = num_attention_heads
+        self.self_attention       = SelfAttentionVectorLayer(hidden_size, kvq_size)
+        self.self_attention_head_layers = nn.ModuleList([ SelfAttentionVectorLayer(hidden_size, kvq_size) for _ in range(self.num_attention_heads)])
+
+        self.self_attention_aggr = nn.Linear(kvq_size, hidden_size)
+        self.linear_aggr = nn.Linear(kvq_size, 1) #TODO use this instead of summing
         self.layer_norm1         = nn.LayerNorm(hidden_size)
         self.ffnn                = nn.Linear(hidden_size, hidden_size)
         self.layer_norm2         = nn.LayerNorm(hidden_size)
         
     def forward(self, x):
-        y = self.self_attention(x)
+
+        attention_heads = torch.empty(1, 1, self.kvq_size)
+        for i in range(self.num_attention_heads):
+          z_i = self.self_attention_head_layers[i](x)
+          attention_heads = torch.cat([attention_heads, z_i])
+
+        y = attention_heads[1:]
         y = self.self_attention_aggr(y)
+        y = torch.sum(y, dim=0, keepdims=True) #TODO use self.linear_aggr
+        
         y = self.layer_norm1(y + x)
         z = self.ffnn(y)
         z = self.layer_norm2(z + y)
+
         return z
-    
+
 # Essentially follows: https://jalammar.github.io/illustrated-transformer/
-class TransformerVectorModel(VectorEmbedder):
+class MultiHeadsTransformerVectorModel(VectorEmbedder):
     def __init__(self, tokenizer, num_layers, hidden_size, vocab_size):
-        super(TransformerVectorModel, self).__init__(tokenizer, hidden_size, vocab_size)
+        super(MultiHeadsTransformerVectorModel, self).__init__(tokenizer, hidden_size, vocab_size)
         self.hidden_size = hidden_size
         self.vocab_size  = vocab_size
         self.embeddings = nn.Embedding(vocab_size, hidden_size)
@@ -40,7 +54,7 @@ class TransformerVectorModel(VectorEmbedder):
         self.set_optimizer(Adam(self.parameters(), lr=1e-3))
         
         # Setup transformer layers
-        self.transformer_layer = nn.ModuleList([ TransformerVectorLayer(hidden_size, 64) for _ in range(num_layers) ])
+        self.transformer_layer = nn.ModuleList([ MultiAttentionHeadsTransformerVectorLayer(hidden_size, 64) for _ in range(num_layers) ])
         
     def forward(self, x):
         x =  self.embeddings(x)
@@ -70,7 +84,3 @@ class TransformerVectorModel(VectorEmbedder):
         model.num_epochs = state['epochs']
         model.load_state_dict(state['state_dict'])
         return model
-
-
-# Usage:
-# model = TransformerVectorModel(tokenizer, 2, 256, tokenizer.vocab_size)
