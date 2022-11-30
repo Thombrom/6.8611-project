@@ -77,7 +77,7 @@ class OutlierDataset():
 
 
 
-def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0):
+def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0, bert=0):
     def distance(a, b):
         return torch.norm(torch.subtract(a,b))
     if print_bool:
