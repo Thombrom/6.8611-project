@@ -22,14 +22,23 @@ class Analogy():
 
 class AnalogyDataset():
     def __init__(self, dataset):
-        self.analogies = []
-        with open(dataset) as f:
-            print("Creating analogies ..")
+        # self.analogies = []
+        # with open(dataset) as f:
+        #     print("Creating analogies ..")
+        #     for line in tqdm(f):
+        #         words = line.split()
+        #         if len(words) == 4:
+        #             word_1, analogy_1, word_2, analogy_2 = words
+        #             self.analogies.append(Analogy(word_1, analogy_1, word_2, analogy_2))
+        self.dataset = dataset
+        print("Creating analogies ..")
+    def get_analogies(self):
+        with open(self.dataset) as f:
             for line in tqdm(f):
                 words = line.split()
                 if len(words) == 4:
                     word_1, analogy_1, word_2, analogy_2 = words
-                    self.analogies.append(Analogy(word_1, analogy_1, word_2, analogy_2))
+                    yield Analogy(word_1, analogy_1, word_2, analogy_2)
 
 
 def get_word_analogy_score(embedder, closest_k=5, dataset_file="project/datasets/word_analogy_dataset/questions-words.txt"):
@@ -57,7 +66,7 @@ def get_word_analogy_score(embedder, closest_k=5, dataset_file="project/datasets
     matching_tokens = 0
     total = 0
     index = 0
-    for analogy_line in tqdm((dataset.analogies), position=0, leave=True):
+    for analogy_line in tqdm((dataset.get_analogies()), position=0, leave=True):
         index += 1
         word_1, analogy_1, word_2, analogy_2 = analogy_line.get()
         word_1 = word_1.lower()
