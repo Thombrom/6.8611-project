@@ -119,21 +119,22 @@ def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0):
         if index%500==0:
             print(index,":", correct/(total+1))
 
+        similarity_list = [(all_embeddings[word_to_index[i]],[]) for i in group.words]
 
         a = all_embeddings[word_to_index[group.word1]]
-        if print_bool:
-            print(group.word1, a)
-        b = all_embeddings[word_to_index[group.word2]]
-        if print_bool:
-            print(group.word2, b)
-        c = all_embeddings[word_to_index[group.word3]]
-        if print_bool:
-            print(group.word3, c)
+        # if print_bool:
+        #     print(group.word1, a)
+        # b = all_embeddings[word_to_index[group.word2]]
+        # if print_bool:
+        #     print(group.word2, b)
+        # c = all_embeddings[word_to_index[group.word3]]
+        # if print_bool:
+        #     print(group.word3, c)
         expected_token = all_embeddings[word_to_index[group.outlier]]
-        if print_bool:
-            print(group.outlier, expected_token)
+        # if print_bool:
+        #     print(group.outlier, expected_token)
 
-        similarity_list = [(a, []), (b, []), (c, []), (expected_token, [])]
+        similarity_list = similarity_list +  [(expected_token, [])]
         random.shuffle(similarity_list)
         if print_bool:
             print(group)
