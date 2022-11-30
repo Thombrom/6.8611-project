@@ -62,6 +62,7 @@ class OutlierDataset():
 
         self.outlier_groups = []
 
+        print("prelim cats:", categories)
         categories = [cat for cat in categories if len(cat[1])>3]
         print(categories)
 
