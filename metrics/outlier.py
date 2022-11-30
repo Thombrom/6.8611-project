@@ -77,8 +77,8 @@ class OutlierDataset():
 def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0):
     def distance(a, b):
         return torch.norm(torch.subtract(a,b))
-
-    print("apple:",embedder.tokenizer('apple').item)
+    if print_bool:
+        print("apple:",embedder.tokenizer('apple').item)
     correct = 0
     index = 0
     total = 0
