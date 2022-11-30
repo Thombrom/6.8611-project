@@ -1,4 +1,4 @@
-from . import SelfAttentionVectorLayer, SelfAttentionVectorLayer
+from . import VectorEmbedder, SelfAttentionVectorLayer
 from torch import nn
 from torch.optim import Adam
 

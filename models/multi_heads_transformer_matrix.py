@@ -1,10 +1,11 @@
 from . import MatrixEmbedder, SelfAttentionMatrixLayer
 from torch import nn
 from torch.optim import Adam
-
-import torch
+import numpy as np
 
 import os
+import tqdm
+import torch
 
 
 class SelfAttentionMatrixLayer(nn.Module):
