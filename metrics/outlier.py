@@ -20,7 +20,7 @@ class OutlierGroup():
 
 
 class OutlierDataset():
-    def __init__(self, embedder, dataset='', numgroups=10000):
+    def __init__(self, embedder, dataset='', numgroups=10000, bert=0):
         # what is going on
         categories = []
 
@@ -40,10 +40,13 @@ class OutlierDataset():
                     for word in f_list:
                         word = word.strip()
                         if " " not in word:
-                            if embedder.tokenizer(word).item()!=0:
-                                # temp = embedder.tokenizer(word)
-                                category_list[1].append(word.split('\n')[0])
-                                # print(category_list[1])
+                            if not bert:
+                                if embedder.tokenizer(word).item()!=0 or bert:
+                                    # temp = embedder.tokenizer(word)
+                                    category_list[1].append(word.split('\n')[0])
+                                    # print(category_list[1])
+                                else:
+                                    category_list[1].append(word.split('\n')[0])
 
 
                 f = file.readline()
