@@ -46,17 +46,18 @@ def get_word_analogy_score(embedder, closest_k=5, dataset_file="project/datasets
 
     # Speed things up for BERT as otherwise this is very slow
     all_embeddings = None
-    if embedder.name == 'Bert':
-        all_embeddings = torch.empty((len(embedder.tokenizer), embedder.hidden_size))
-        for word, token in embedder.tokenizer.get_vocab():
-            all_embeddings[token] = embedder.model.get_input_embeddings()(torch.tensor(token))
-    else:
-        words = [''] * len(embedder.tokenizer)
-        for word, token in tqdm(embedder.tokenizer.get_vocab()):
-            words[token] = word
-        tokenized = embedder.tokenizer(words, embedder.maxlen)
-        pre_embeddings = embedder(tokenized)
-        all_embeddings = embedder.generator.vectorize(pre_embeddings)[:, 0]
+    with torch.no_grad():
+        if embedder.name == 'Bert':
+            all_embeddings = torch.empty((len(embedder.tokenizer), embedder.hidden_size))
+            for word, token in embedder.tokenizer.get_vocab():
+                all_embeddings[token] = embedder.model.get_input_embeddings()(torch.tensor(token))
+        else:
+            words = [''] * len(embedder.tokenizer)
+            for word, token in tqdm(embedder.tokenizer.get_vocab()):
+                words[token] = word
+            tokenized = embedder.tokenizer(words, embedder.maxlen)
+            pre_embeddings = embedder(tokenized)
+            all_embeddings = embedder.generator.vectorize(pre_embeddings)[:, 0]
         
     
     word_to_index = {}
