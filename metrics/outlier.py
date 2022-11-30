@@ -33,7 +33,7 @@ class OutlierDataset():
                 all_words = []
                 for word, token in embedder.tokenizer.get_vocab():
                     all_words.append(word)
-                    
+
             while f != "":
                 f_list = f.split(',')
 
@@ -155,7 +155,7 @@ def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0):
         avg_similarity_list = [(i[0], sum(i[1]) / 3) for i in similarity_list]
         if print_bool:
             print(avg_similarity_list)
-        least_similar = sorted(avg_similarity_list, key=lambda x: x[1])[-1][0]
+        least_similar = sorted(avg_similarity_list, key=lambda x: x[1])[0][0]
         # least_similar = similarity_list[0][0]
 
         # print(least_similar, expected_token)
