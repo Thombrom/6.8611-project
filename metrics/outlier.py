@@ -152,7 +152,8 @@ def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0, bert=0):
 
         # print(least_similar, expected_token)
 
-        if least_similar == expected_token:
+        # if least_similar == expected_token:
+        if distance(least_similar, expected_token)==0:
             correct += 1
         total += 1
 
