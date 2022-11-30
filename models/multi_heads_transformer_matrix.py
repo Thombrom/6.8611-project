@@ -43,9 +43,9 @@ class MultiAttentionHeadsTransformerMatrixLayer(nn.Module):
 
 # Essentially follows: https://jalammar.github.io/illustrated-transformer/
 # but abstracted to work for matrices
-class TransformerMatrixModel(MatrixEmbedder):
+class MultiHeadsTransformerMatrixModel(MatrixEmbedder):
     def __init__(self, tokenizer, num_layers, hidden_shape, vocab_size, maxlen):
-        super(TransformerMatrixModel, self).__init__(tokenizer, hidden_shape, vocab_size, maxlen)
+        super(MultiHeadsTransformerMatrixModel, self).__init__(tokenizer, hidden_shape, vocab_size, maxlen)
         self.hidden_shape = hidden_shape
         self.vocab_size  = vocab_size
         self.embeddings = nn.Parameter(torch.randn(vocab_size, *hidden_shape))
