@@ -20,7 +20,7 @@ class OutlierGroup():
 
 
 class OutlierDataset():
-    def __init__(self, embedder, dataset='', numgroups=10000, bert=0):
+    def __init__(self, embedder, dataset='', numgroups=10000):
         # what is going on
         categories = []
 
@@ -36,17 +36,26 @@ class OutlierDataset():
                     categories.append(append_list)
                     category_list = (f_list[0].split('\n')[0], [])
 
+
+                if embedder.name == "Bert":
+                    all_embeddings = torch.empty((len(embedder.tokenizer), embedder.hidden_size))
+                    for word, token in embedder.tokenizer.get_vocab():
+                        all_embeddings[token] = embedder.model.get_input_embeddings()(torch.tensor(token))
                 else:
                     for word in f_list:
                         word = word.strip()
                         if " " not in word:
-                            if not bert:
+                            if embedder.name == 'Bert':
+                                try:
+                                    all_embeddings[word]
+                                    category_list[1].append(word.split('\n')[0])
+                                except KeyError:
+                                    continue
+                            else:
                                 if embedder.tokenizer(word).item()!=0:
                                     # temp = embedder.tokenizer(word)
                                     category_list[1].append(word.split('\n')[0])
                                     # print(category_list[1])
-                            else:
-                                category_list[1].append(word.split('\n')[0])
 
 
                 f = file.readline()
@@ -77,7 +86,7 @@ class OutlierDataset():
 
 
 
-def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0, bert=0):
+def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0):
     def distance(a, b):
         return torch.norm(torch.subtract(a,b))
     if print_bool:
@@ -86,7 +95,7 @@ def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0, bert=0):
     index = 0
     total = 0
 
-    dataset = OutlierDataset(embedder, datafile, numgroups,bert=bert)
+    dataset = OutlierDataset(embedder, datafile, numgroups)
     outlier_groups = dataset.get_outlier_groups()
 
     all_embeddings = None
