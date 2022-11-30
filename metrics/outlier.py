@@ -38,19 +38,16 @@ class OutlierDataset():
 
 
                 if embedder.name == "Bert":
-                    all_embeddings = torch.empty((len(embedder.tokenizer), embedder.hidden_size))
+                    all_words = []
                     for word, token in embedder.tokenizer.get_vocab():
-                        all_embeddings[token] = embedder.model.get_input_embeddings()(torch.tensor(token))
+                        all_words.append(word)
                 else:
                     for word in f_list:
                         word = word.strip()
                         if " " not in word:
                             if embedder.name == 'Bert':
-                                try:
-                                    all_embeddings[word]
+                                if word in all_words:
                                     category_list[1].append(word.split('\n')[0])
-                                except KeyError:
-                                    continue
                             else:
                                 if embedder.tokenizer(word).item()!=0:
                                     # temp = embedder.tokenizer(word)
