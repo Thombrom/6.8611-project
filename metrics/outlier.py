@@ -144,7 +144,7 @@ def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0):
                     w1 = torch.flatten(similarity_list[i][0])
                     w2 = torch.flatten(similarity_list[j][0])
                     # print("w1:",w1)
-                    similarity = cosine_similiarity(w1, w2).item()
+                    similarity = abs(distance(w1, w2).item())
                     # print("similarity:", similarity)
                     similarity_list[i][1].append(similarity)
                     similarity_list[j][1].append(similarity)
