@@ -74,7 +74,6 @@ class OutlierDataset():
 
             similar_group = [similar_category[1][i] for i in random.sample(range(len(similar_category[1])), 3)]
             outlier_group = similar_group + [random.choice(outlier_category[1])]
-            random.shuffle(outlier_group)
 
             # print(outlier_group)
 
@@ -90,9 +89,6 @@ def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0):
         return torch.norm(torch.subtract(a,b))
     def cosine_similiarity(a,b):
         return torch.dot(a,b)/(torch.norm(a)*torch.norm(b))
-
-
-
     if print_bool:
         print("apple:",embedder.tokenizer('apple').item)
     correct = 0
