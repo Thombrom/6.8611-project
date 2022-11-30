@@ -28,6 +28,12 @@ class OutlierDataset():
             f = file.readline()
             category_list = (f.split('\n')[0], [])
             f = file.readline()
+
+            if embedder.name == "Bert":
+                all_words = []
+                for word, token in embedder.tokenizer.get_vocab():
+                    all_words.append(word)
+                    
             while f != "":
                 f_list = f.split(',')
 
@@ -36,11 +42,6 @@ class OutlierDataset():
                     categories.append(append_list)
                     category_list = (f_list[0].split('\n')[0], [])
 
-
-                if embedder.name == "Bert":
-                    all_words = []
-                    for word, token in embedder.tokenizer.get_vocab():
-                        all_words.append(word)
                 else:
                     for word in f_list:
                         word = word.strip()
