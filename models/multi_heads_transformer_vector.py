@@ -28,15 +28,24 @@ class MultiAttentionHeadsTransformerVectorLayer(nn.Module):
         
     def forward(self, x):
 
+        tester = False
         if x.shape[0] == 1: #for epoch tester: TODO make metrics send data in batches
-          print("heree")
+          tester = True
           x = torch.tile(x, (self.batch_size, 1, 1))
+        
+        #zero padding
+        elif x.shape[0] < self.batch_size:
+          zeros_to_pad = self.batch_size - x.shape[0]
+          zeros_array = torch.zeros(zeros_to_pad, *x.shape[1:]).to("cuda")
+          x = torch.cat([x, zeros_array]).to("cuda")
 
         attention_heads = self.self_attention_head_layers[0](x)
         for i in range(1, self.num_attention_heads):
           z_i = self.self_attention_head_layers[i](x)
           attention_heads = torch.cat([attention_heads, z_i])
 
+
+       
         y = self.linear_aggr(attention_heads.permute(1, 2, 0)).permute(2, 0, 1)
         y = self.self_attention_aggr(y)
         
@@ -44,7 +53,10 @@ class MultiAttentionHeadsTransformerVectorLayer(nn.Module):
         z = self.ffnn(y)
         z = self.layer_norm2(z + y)
 
-        return x
+        if tester:
+          # print(z[0] == z[1])
+          z = z[0:1] # take the first element or may take mean?
+        return z
 
 # Essentially follows: https://jalammar.github.io/illustrated-transformer/
 class MultiHeadsTransformerVectorModel(VectorEmbedder):

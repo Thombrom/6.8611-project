@@ -26,8 +26,16 @@ class MultiAttentionHeadsTransformerMatrixLayer(nn.Module):
 
     def forward(self, x):
 
+        tester = False
         if x.shape[0] == 1: #for epoch tester
+          tester = True
           x = torch.tile(x, (self.batch_size, 1, 1, 1))
+
+        #zero padding if x is less than batch size
+        elif x.shape[0] < self.batch_size:
+          zeros_to_pad = self.batch_size - x.shape[0]
+          zeros_array = torch.zeros(zeros_to_pad, *x.shape[1:]).to("cuda")
+          x = torch.cat([x, zeros_array]).to("cuda")
 
         attention_heads = self.self_attention_head_layers[0](x)
         for i in range(1, self.num_attention_heads):
@@ -46,6 +54,10 @@ class MultiAttentionHeadsTransformerMatrixLayer(nn.Module):
         y = self.layer_norm1(torch.add(y, x))
         z = self.ffnn(y)
         z = self.layer_norm2(torch.add(y, z))
+
+        if tester:
+          z = z[0:1] # take the first element or may take mean?
+
         return z
 
 # Essentially follows: https://jalammar.github.io/illustrated-transformer/
