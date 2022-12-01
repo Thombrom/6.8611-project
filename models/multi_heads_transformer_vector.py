@@ -7,12 +7,12 @@ from tqdm import tqdm
 import torch
 
 class MultiAttentionHeadsTransformerVectorLayer(nn.Module):
-    def __init__(self, hidden_size, kvq_size = 64, num_attention_heads=4):
+    def __init__(self, hidden_size, kvq_size = 64, num_attention_heads=4, batch_size=32):
         super(MultiAttentionHeadsTransformerVectorLayer, self).__init__()
 
         assert num_attention_heads >= 2, "number of attention heads must >= 2"
         self.hidden_size = hidden_size
-
+        self.batch_size = batch_size
         self.kvq_size = kvq_size
 
         # Set up the parts of the transformer
@@ -21,16 +21,22 @@ class MultiAttentionHeadsTransformerVectorLayer(nn.Module):
 
         self.self_attention_aggr = nn.Linear(kvq_size, hidden_size)
         
-        self.linear_aggr = nn.Linear(num_attention_heads, 1)
+        self.linear_aggr = nn.Linear(self.batch_size*num_attention_heads, self.batch_size)
         self.layer_norm1         = nn.LayerNorm(hidden_size)
         self.ffnn                = nn.Linear(hidden_size, hidden_size)
         self.layer_norm2         = nn.LayerNorm(hidden_size)
         
     def forward(self, x):
+
+        if x.shape[0] == 1: #for epoch tester: TODO make metrics send data in batches
+          print("heree")
+          x = torch.tile(x, (self.batch_size, 1, 1))
+
         attention_heads = self.self_attention_head_layers[0](x)
         for i in range(1, self.num_attention_heads):
           z_i = self.self_attention_head_layers[i](x)
           attention_heads = torch.cat([attention_heads, z_i])
+
         y = self.linear_aggr(attention_heads.permute(1, 2, 0)).permute(2, 0, 1)
         y = self.self_attention_aggr(y)
         
@@ -84,4 +90,4 @@ class MultiHeadsTransformerVectorModel(VectorEmbedder):
         model.load_state_dict(state['state_dict'])
         return model
 
-# model = MultiHeadsTransformerVectorModel(tokenizer, 2, 256, tokenizer.vocab_size)
+# model = MultiHeadsTransformerVectorModel(tokenizer, 2, 256, tokenizer.vocab_size, batch_size=32)
