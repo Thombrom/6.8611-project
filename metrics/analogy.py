@@ -22,14 +22,6 @@ class Analogy():
 
 class AnalogyDataset():
     def __init__(self, dataset):
-        # self.analogies = []
-        # with open(dataset) as f:
-        #     print("Creating analogies ..")
-        #     for line in tqdm(f):
-        #         words = line.split()
-        #         if len(words) == 4:
-        #             word_1, analogy_1, word_2, analogy_2 = words
-        #             self.analogies.append(Analogy(word_1, analogy_1, word_2, analogy_2))
         self.dataset = dataset
         print("Creating analogies ..")
     def get_analogies(self):
@@ -55,9 +47,18 @@ def get_word_analogy_score(embedder, closest_k=5, dataset_file="project/datasets
             words = [''] * len(embedder.tokenizer)
             for word, token in tqdm(embedder.tokenizer.get_vocab()):
                 words[token] = word
-            tokenized = embedder.tokenizer(words, embedder.maxlen)
-            pre_embeddings = embedder(tokenized)
+
+              
+            tokenized = embedder.tokenizer(words, embedder.maxlen).unsqueeze(-1)
+
+            pre_embeddings = embedder(tokenized[0])
+            for token in tokenized[1:]:
+              pre_embeddings = torch.cat([pre_embeddings, embedder(token)])
+
             all_embeddings = embedder.generator.vectorize(pre_embeddings)[:, 0]
+
+
+            print("all embeddings", all_embeddings.shape)
         
     
     word_to_index = {}

@@ -3,11 +3,11 @@ from torch import nn
 from torch.optim import Adam
 
 import os
-import tqdm
+from tqdm import tqdm
 import torch
 
 class MultiAttentionHeadsTransformerVectorLayer(nn.Module):
-    def __init__(self, hidden_size, kvq_size = 64, num_attention_heads=3):
+    def __init__(self, hidden_size, kvq_size = 64, num_attention_heads=4):
         super(MultiAttentionHeadsTransformerVectorLayer, self).__init__()
 
         assert num_attention_heads >= 2, "number of attention heads must >= 2"
@@ -17,23 +17,20 @@ class MultiAttentionHeadsTransformerVectorLayer(nn.Module):
 
         # Set up the parts of the transformer
         self.num_attention_heads = num_attention_heads
-        # self.self_attention       = SelfAttentionVectorLayer(hidden_size, kvq_size)
         self.self_attention_head_layers = nn.ModuleList([ SelfAttentionVectorLayer(hidden_size, kvq_size) for _ in range(self.num_attention_heads)])
 
         self.self_attention_aggr = nn.Linear(kvq_size, hidden_size)
         
-        self.linear_aggr = nn.Linear(32*num_attention_heads, 32) #Where is 32 coming from?
+        self.linear_aggr = nn.Linear(num_attention_heads, 1)
         self.layer_norm1         = nn.LayerNorm(hidden_size)
         self.ffnn                = nn.Linear(hidden_size, hidden_size)
         self.layer_norm2         = nn.LayerNorm(hidden_size)
         
     def forward(self, x):
-
         attention_heads = self.self_attention_head_layers[0](x)
         for i in range(1, self.num_attention_heads):
           z_i = self.self_attention_head_layers[i](x)
           attention_heads = torch.cat([attention_heads, z_i])
-        
         y = self.linear_aggr(attention_heads.permute(1, 2, 0)).permute(2, 0, 1)
         y = self.self_attention_aggr(y)
         
@@ -41,7 +38,7 @@ class MultiAttentionHeadsTransformerVectorLayer(nn.Module):
         z = self.ffnn(y)
         z = self.layer_norm2(z + y)
 
-        return z
+        return x
 
 # Essentially follows: https://jalammar.github.io/illustrated-transformer/
 class MultiHeadsTransformerVectorModel(VectorEmbedder):
@@ -87,3 +84,4 @@ class MultiHeadsTransformerVectorModel(VectorEmbedder):
         model.load_state_dict(state['state_dict'])
         return model
 
+# model = MultiHeadsTransformerVectorModel(tokenizer, 2, 256, tokenizer.vocab_size)
