@@ -52,7 +52,7 @@ def get_word_analogy_score(embedder, closest_k=5, dataset_file="project/datasets
             tokenized = embedder.tokenizer(words, embedder.maxlen).unsqueeze(-1)
 
             pre_embeddings = embedder(tokenized[0].T)
-            for token in tokenized[1:]:
+            for token in tqdm(tokenized[1:]):
               pre_embeddings = torch.cat([pre_embeddings, embedder(token.T)])
 
             all_embeddings = embedder.generator.vectorize(pre_embeddings)[:, 0]
