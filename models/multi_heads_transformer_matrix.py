@@ -16,7 +16,7 @@ class MultiAttentionHeadsTransformerMatrixLayer(nn.Module):
         self.num_attention_heads = num_attention_heads
         self.self_attention_head_layers = nn.ModuleList([ SelfAttentionMatrixLayer(hidden_shape, maxlen) for _ in range(self.num_attention_heads)])
         self.self_attention_aggr  = nn.Conv2d(maxlen, 4 * maxlen, (3, 3), padding=1, padding_mode='zeros', groups=maxlen)
-        self.linear_layer = nn.Linear(sum(self.hidden_shape)*self.num_attention_heads, sum(self.hidden_shape))
+        self.linear_layer = nn.Linear(self.num_attention_heads, 1))
         self.layer_norm1          = nn.LayerNorm(self.hidden_shape)
         self.ffnn                 = nn.Conv2d(maxlen, maxlen, (3, 3), padding=1, padding_mode='zeros')
         self.layer_norm2          = nn.LayerNorm(self.hidden_shape)
