@@ -125,6 +125,7 @@ class SelfAttentionVectorLayer(nn.Module):
                 
         attention = torch.bmm(query, torch.transpose(key, 1, 2))
         attention /= self.kvq_size**(1/2)
+        attention = F.softmax(attention, dim=1)
         attended_value = torch.bmm(attention, value)
         
         return attended_value
@@ -150,5 +151,6 @@ class SelfAttentionMatrixLayer(nn.Module):
         
         attention = torch.einsum('bijk,bljk->bil', key, query)
         attention /= (np.prod(self.hidden_shape) / 4)**(1/2)
+        attention = F.softmax(attention, dim=1)
         attended_value = torch.einsum('bin,bnjk->bijk', attention, value)
         return attended_value
