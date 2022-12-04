@@ -7,43 +7,22 @@ import torch
 import os
 import torch
 class MultiAttentionHeadsTransformerMatrixLayer(nn.Module):
-    def __init__(self, hidden_shape, maxlen=None, num_attention_heads=8, batch_size=32):
+    def __init__(self, hidden_shape, maxlen=None, num_attention_heads=8):
         super(MultiAttentionHeadsTransformerMatrixLayer, self).__init__()
         self.hidden_shape = hidden_shape
         self.maxlen = maxlen
-        self.batch_size = batch_size
-
-        print("Note: Remember to set the correct batch size!!!")
         
         # Set up the parts of the transformer
         self.num_attention_heads = num_attention_heads
         self.self_attention_head_layers = nn.ModuleList([ SelfAttentionMatrixLayer(hidden_shape, maxlen) for _ in range(self.num_attention_heads)])
-        self.self_attention_aggr  = nn.Conv2d(maxlen, 4 * maxlen, (3, 3), padding=1, padding_mode='zeros', groups=maxlen)
-        self.linear_layer = nn.Linear(batch_size*self.num_attention_heads, batch_size)
+        self.self_attention_aggr  = nn.Conv2d(maxlen * num_attention_heads, 4 * maxlen, (3, 3), padding=1, padding_mode='zeros')
         self.layer_norm1          = nn.LayerNorm(self.hidden_shape)
         self.ffnn                 = nn.Conv2d(maxlen, maxlen, (3, 3), padding=1, padding_mode='zeros')
         self.layer_norm2          = nn.LayerNorm(self.hidden_shape)
 
     def forward(self, x):
-
-        tester = False
-        if x.shape[0] == 1: #for epoch tester
-          tester = True
-          x = torch.tile(x, (self.batch_size, 1, 1, 1))
-
-        #zero padding if x is less than batch size
-        elif x.shape[0] < self.batch_size:
-          zeros_to_pad = self.batch_size - x.shape[0]
-          zeros_array = torch.zeros(zeros_to_pad, *x.shape[1:]).to("cuda")
-          x = torch.cat([x, zeros_array]).to("cuda")
-
-        attention_heads = self.self_attention_head_layers[0](x)
-        for i in range(1, self.num_attention_heads):
-          z_i = self.self_attention_head_layers[i](x)
-          attention_heads = torch.cat([attention_heads, z_i])
-
-        y = self.linear_layer(attention_heads.permute(1, 2, 3, 0)).permute(3, 0, 1, 2)
-
+        zs = [ attention_head_layer(x) for attention_head_layer in self.self_attention_head_layers ]
+        y = torch.cat(zs, -3)
         y = self.self_attention_aggr(y)
         
         # Transform the shape back up to the original input
@@ -55,27 +34,25 @@ class MultiAttentionHeadsTransformerMatrixLayer(nn.Module):
         z = self.ffnn(y)
         z = self.layer_norm2(torch.add(y, z))
 
-        if tester:
-          z = z[0:1] # take the first element or may take mean?
-
         return z
 
 # Essentially follows: https://jalammar.github.io/illustrated-transformer/
 # but abstracted to work for matrices
 class MultiHeadsTransformerMatrixModel(MatrixEmbedder):
-    def __init__(self, tokenizer, num_layers, hidden_shape, vocab_size, maxlen):
+    def __init__(self, tokenizer, num_layers, num_heads, hidden_shape, vocab_size, maxlen):
         super(MultiHeadsTransformerMatrixModel, self).__init__(tokenizer, hidden_shape, vocab_size, maxlen)
         self.hidden_shape = hidden_shape
         self.vocab_size  = vocab_size
         self.embeddings = nn.Parameter(torch.randn(vocab_size, *hidden_shape))
         self.num_layers = num_layers
         self.maxlen = maxlen
+        self.num_heads = num_heads
         
         # Setup optimizer
         self.set_optimizer(Adam(self.parameters(), lr=1e-3))
         
         # Setup transformer layers
-        self.transformer_layer = nn.ModuleList([ MultiAttentionHeadsTransformerMatrixLayer(hidden_shape, maxlen) for _ in range(num_layers) ])
+        self.transformer_layer = nn.ModuleList([ MultiAttentionHeadsTransformerMatrixLayer(hidden_shape, maxlen, num_heads) for _ in range(num_layers) ])
         
     def forward(self, x):
         x =  self.embeddings[x]        
@@ -93,7 +70,8 @@ class MultiHeadsTransformerMatrixModel(MatrixEmbedder):
             'vocab_size':   self.vocab_size,
             'tokenizer':    self.tokenizer.save(),
             'num_layers':   self.num_layers,
-            'max_len':      self.maxlen
+            'max_len':      self.maxlen,
+            'num_heads':    self.num_heads
         }
         torch.save(state, path)
         
@@ -101,11 +79,11 @@ class MultiHeadsTransformerMatrixModel(MatrixEmbedder):
     def load(cls, tokenizer_cls, path):
         state = torch.load(path)
         tokenizer = tokenizer_cls.load(state['tokenizer'])
-        model = cls(tokenizer, state['num_layers'], state['hidden_shape'], state['vocab_size'], state['maxlen'])
+        model = cls(tokenizer, state['num_layers'], state['num_heads'], state['hidden_shape'], state['vocab_size'], state['maxlen'])
         model.optimizer.load_state_dict(state['optimizer'])
         model.num_epochs = state['epochs']
         model.load_state_dict(state['state_dict'])
         return model
 
 
-# model = MultiHeadsTransformerMatrixModel(tokenizer, 8, (16, 16), tokenizer.vocab_size, 50, batch_size=32)
+# model = MultiHeadsTransformerMatrixModel(tokenizer, 2, 2, (16, 16), tokenizer.vocab_size, 50, batch_size=32)
