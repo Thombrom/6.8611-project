@@ -1,6 +1,8 @@
 import torch
 from torch.optim import Adam
 from . import MatrixEmbedder
+
+
 class WordAutoencoderModel(MatrixEmbedder):
     def __init__(self, tokenizer, shape, vocab_size, maxlen):
         super(WordAutoencoderModel, self).__init__(tokenizer, shape, vocab_size, maxlen)
