@@ -1,4 +1,4 @@
-import torch
+import torch, os
 from torch.optim import Adam
 from . import MatrixEmbedder
 
