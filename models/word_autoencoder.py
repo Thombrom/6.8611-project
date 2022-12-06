@@ -41,6 +41,8 @@ class WordAutoencoderModel(MatrixEmbedder):
             'maxlen': self.maxlen
         }
         torch.save(state, path)
+
+    @classmethod
     def load(cls, tokenizer_cls, path):
         state = torch.load(path)
         tokenizer = tokenizer_cls.load(state['tokenizer'])
