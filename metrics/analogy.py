@@ -40,25 +40,16 @@ def get_word_analogy_score(embedder, closest_k=5, dataset_file="project/datasets
     all_embeddings = None
     with torch.no_grad():
         if embedder.name == 'Bert':
-            all_embeddings = torch.empty((len(embedder.tokenizer), embedder.hidden_size))
+            all_embeddings = torch.empty((len(embedder.tokenizer), embedder.hidden_size), device=embedder.device)
             for word, token in embedder.tokenizer.get_vocab():
-                all_embeddings[token] = embedder.model.get_input_embeddings()(torch.tensor(token))
+                all_embeddings[token] = embedder.model.get_input_embeddings()(torch.tensor(token, device=embedder.device))
         else:
             words = [''] * len(embedder.tokenizer)
             for word, token in tqdm(embedder.tokenizer.get_vocab()):
                 words[token] = word
-
-              
-            tokenized = embedder.tokenizer(words, embedder.maxlen).unsqueeze(-1)
-
-            pre_embeddings = embedder(tokenized[0].T)
-            for token in tqdm(tokenized[1:]):
-              pre_embeddings = torch.cat([pre_embeddings, embedder(token.T)])
-
+            tokenized = embedder.tokenizer(words, embedder.maxlen).to('cuda')
+            pre_embeddings = embedder(tokenized).to(embedder.device)
             all_embeddings = embedder.generator.vectorize(pre_embeddings)[:, 0]
-
-
-            print("all embeddings", all_embeddings.shape)
         
     
     word_to_index = {}
