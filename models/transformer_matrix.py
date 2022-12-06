@@ -75,7 +75,7 @@ class TransformerMatrixModel(MatrixEmbedder):
     def load(cls, tokenizer_cls, path):
         state = torch.load(path)
         tokenizer = tokenizer_cls.load(state['tokenizer'])
-        model = cls(tokenizer, state['num_layers'], state['hidden_shape'], state['vocab_size'], state['maxlen'])
+        model = cls(tokenizer, state['num_layers'], state['hidden_shape'], state['vocab_size'], state['max_len'])
         model.optimizer.load_state_dict(state['optimizer'])
         model.num_epochs = state['epochs']
         model.load_state_dict(state['state_dict'])
