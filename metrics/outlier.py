@@ -96,17 +96,18 @@ def detect_outliers(embedder, datafile, numgroups=10000, print_bool=0):
     outlier_groups = dataset.get_outlier_groups()
 
     all_embeddings = None
-    if embedder.name == 'Bert':
-        all_embeddings = torch.empty((len(embedder.tokenizer), embedder.hidden_size))
-        for word, token in embedder.tokenizer.get_vocab():
-            all_embeddings[token] = embedder.model.get_input_embeddings()(torch.tensor(token))
-    else:
-        words = [''] * len(embedder.tokenizer)
-        for word, token in tqdm(embedder.tokenizer.get_vocab()):
-            words[token] = word
-        tokenized = embedder.tokenizer(words, embedder.maxlen)
-        pre_embeddings = embedder(tokenized)
-        all_embeddings = embedder.generator.vectorize(pre_embeddings)[:, 0]
+    with torch.no_grad():
+        if embedder.name == 'Bert':
+            all_embeddings = torch.empty((len(embedder.tokenizer), embedder.hidden_size), device=embedder.device)
+            for word, token in embedder.tokenizer.get_vocab():
+                all_embeddings[token] = embedder.model.get_input_embeddings()(torch.tensor(token, device=embedder.device))
+        else:
+            words = [''] * len(embedder.tokenizer)
+            for word, token in tqdm(embedder.tokenizer.get_vocab()):
+                words[token] = word
+            tokenized = embedder.tokenizer(words, embedder.maxlen).to('cuda')
+            pre_embeddings = embedder(tokenized).to(embedder.device)
+            all_embeddings = embedder.generator.vectorize(pre_embeddings)[:, 0]
 
     word_to_index = {}
     for word, idx in tqdm(embedder.tokenizer.get_vocab()):
