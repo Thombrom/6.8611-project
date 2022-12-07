@@ -8,13 +8,13 @@ from . import MatrixEmbedder
 
 
 class DoubleVectorModel(MatrixEmbedder):
-    def __init__(self, tokenizer, shape, vocab_size, maxlen):
-        super(DoubleVectorModel, self).__init__(tokenizer, shape, vocab_size, maxlen)
-        self.shape = shape
+    def __init__(self, tokenizer, hidden_size, vocab_size, maxlen):
+        super(DoubleVectorModel, self).__init__(tokenizer, hidden_size, vocab_size, maxlen)
+        self.hidden_size = hidden_size
         self.maxlen = maxlen
         self.vocab_size = vocab_size
 
-        self.embeddings = nn.Parameter(torch.randn(vocab_size, (shape,1)))
+        self.embeddings = nn.Parameter(torch.randn(vocab_size, *(hidden_size,1)))
         self.linear = nn.Linear(maxlen, maxlen, bias=False)
         self.set_optimizer(Adam(self.parameters(), lr=1e-3))
 
