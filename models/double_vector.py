@@ -15,12 +15,12 @@ class DoubleVectorModel(MatrixEmbedder):
         self.vocab_size = vocab_size
 
         self.embeddings = nn.Parameter(torch.randn(vocab_size, (shape,1)))
-        self.conv_layer = nn.Conv2d(maxlen, maxlen, (3, 1), padding=1, padding_mode='zeros')
+        self.linear = nn.Linear(maxlen, maxlen, bias=False)
         self.set_optimizer(Adam(self.parameters(), lr=1e-3))
 
     def forward(self, x):
         x = self.embeddings[x]
-        return self.conv_layer(x)
+        return self.linear(x)
 
     def save(self, folder, name):
         path = os.sep.join([folder, name])
