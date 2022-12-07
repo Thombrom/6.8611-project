@@ -46,4 +46,4 @@ class DoubleVectorModel(MatrixEmbedder):
         return model
 
 # Usage:
-model = DoubleMatrixModel(tokenizer, 16, tokenizer.vocab_size, 50)
+# model = DoubleMatrixModel(tokenizer, 16, tokenizer.vocab_size, 50)
