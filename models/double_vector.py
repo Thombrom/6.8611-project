@@ -4,7 +4,7 @@ import os
 import tqdm
 
 from torch.optim import Adam
-from . import MatrixEmbedder
+from . import VectorEmbedder
 
 
 class DoubleVectorModel(VectorEmbedder):
