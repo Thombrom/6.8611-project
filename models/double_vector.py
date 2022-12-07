@@ -7,7 +7,7 @@ from torch.optim import Adam
 from . import MatrixEmbedder
 
 
-class DoubleVectorModel(MatrixEmbedder):
+class DoubleVectorModel(VectorEmbedder):
     def __init__(self, tokenizer, hidden_size, vocab_size, maxlen):
         super(DoubleVectorModel, self).__init__(tokenizer, hidden_size, vocab_size, maxlen)
         self.hidden_size = hidden_size
