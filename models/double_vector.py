@@ -32,7 +32,7 @@ class DoubleVectorModel(VectorEmbedder):
             'state_dict': self.state_dict(),
             'optimizer': self.optimizer.state_dict(),
             'epochs': self.num_epochs,
-            'shape': self.shape,
+            'hidden_size': self.hidden_size,
             'vocab_size': self.vocab_size,
             'tokenizer': self.tokenizer.save(),
             'maxlen': self.maxlen
@@ -43,7 +43,7 @@ class DoubleVectorModel(VectorEmbedder):
     def load(cls, tokenizer_cls, path):
         state = torch.load(path)
         tokenizer = tokenizer_cls.load(state['tokenizer'])
-        model = cls(tokenizer, state['shape'], state['vocab_size'], state['maxlen'])
+        model = cls(tokenizer, state['hidden_size'], state['vocab_size'], state['maxlen'])
         model.optimizer.load_state_dict(state['optimizer'])
         model.num_epochs = state['epochs']
         model.load_state_dict(state['state_dict'])
